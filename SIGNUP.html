@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>EduLink | Sign Up</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #divide {
+            background-color: #ffffff;
+            width: 72%;
+            max-width: 900px;
+            padding: 40px 50px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Header */
+        .brand {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .brand h1 {
+            color: #1e40af;
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .brand p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        /* Role switch */
+        .role-switch {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 14px 0;
+            border: none;
+            border-radius: 30px;
+            background: #e0e7ff;
+            color: #1e40af;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .role-btn.active {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+        }
+
+        /* Form section */
+        #formSection {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .section-title {
+            color: #9ca3af;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .outer1 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        /* Submit */
+        .submit-btn {
+            text-align: center;
+            margin-top: 35px;
+        }
+
+        .submit-btn a {
+            display: inline-block;
+            padding: 14px 40px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .submit-btn a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            #divide {
+                width: 90%;
+            }
+
+            .outer1 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        img {
+            height: 100px;
+            width: 100px;
+            position: relative;
+            top: 40px;
+        }
+
+        #logo,
+        img {
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="divide">
+
+        <div class="brand">
+            <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg">
+            <h1 id="logo">EduLink</h1>
+            <br><br>
+            <p>Connect • Learn • Grow</p>
+            <p>
+            <h1>Sign Up as a</h1>
+            </p>
+        </div>
+
+        <div class="role-switch">
+            <button class="role-btn" id="studentBtn">Student</button>
+            <button class="role-btn" id="teacherBtn">Teacher</button>
+        </div>
+
+        <div id="formSection">
+            <div class="section-title">Personal Details</div>
+
+            <div class="outer1">
+
+                <div>
+                    <div class="field">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Enter your name">
+                    </div>
+
+                    <div class="field">
+                        <label>User Name</label>
+                        <input type="text" placeholder="Choose a username">
+                    </div>
+
+                    <div class="field" id="studentField">
+                        <label>College Roll No</label>
+                        <input type="text" placeholder="Enter roll number">
+                    </div>
+
+                    <div class="field">
+                        <label>Mobile Number</label>
+                        <input type="text" placeholder="Enter mobile number">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter your email">
+                    </div>
+
+                    <div class="field">
+                        <label>Create Password</label>
+                        <input type="password" placeholder="Create password">
+                    </div>
+
+                    <div class="field">
+                        <label>Confirm Password</label>
+                        <input type="password" placeholder="Confirm password">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="submit-btn">
+                <a href="ass1.html">Create Account</a>
+            </div>
+            <p style="text-align:center; margin-top:15px;">
+                Already have an account?
+                <a href="login.html">Login</a>
+            </p>
+
+        </div>
+    </div>
+
+    <script>
+        const studentBtn = document.getElementById("studentBtn");
+        const teacherBtn = document.getElementById("teacherBtn");
+        const formSection = document.getElementById("formSection");
+        const studentField = document.getElementById("studentField");
+
+        studentBtn.addEventListener("click", () => {
+            formSection.style.display = "block";
+            studentField.style.display = "block";
+            studentBtn.classList.add("active");
+            teacherBtn.classList.remove("active");
+        });
+
+        teacherBtn.addEventListener("click", () => {
+            formSection.style.display = "block";
+            studentField.style.display = "none";
+            teacherBtn.classList.add("active");
+            studentBtn.classList.remove("active");
+        });
+    </script>
+
+</body>
+
+</html>
