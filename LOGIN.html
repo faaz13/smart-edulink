@@ -155,6 +155,23 @@
             background: #ffffff;
             padding: 6px;
         }
+        .forgot {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+.forgot a {
+    font-size: 12px;
+    color: #ffffff;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.forgot a:hover {
+    color: #e0e7ff;
+}
+
     </style>
 </head>
 
@@ -173,13 +190,19 @@
         </div>
         <form>
             <label>Username</label>
-            <input type="text" placeholder="Enter your username" required  />
+            <input type="text" placeholder="Enter your username" required />
 
             <label>Password</label>
-            <input type="password" placeholder="Enter your password" required minlength="7"/>
+            <input type="password" placeholder="Enter your password" required minlength="7" />
+
+    <!-- Forgot Password Link -->
+            <div class="forgot">
+                <a href="forgot-password.html">Forgot Password?</a>
+            </div>
 
             <button type="submit" class="login-btn">Login</button>
         </form>
+
         <div class="extra">
             Don’t have an account? <a href="SIGNUP.html">Create one</a>
         </div>
@@ -200,3 +223,4 @@
 
 
 </html>
+
