@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Classroom - EduLink</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+background:linear-gradient(135deg,#7b7dfc,#6bb7f5);
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(15px);
+padding:40px;
+width:400px;
+border-radius:20px;
+box-shadow:0 15px 40px rgba(0,0,0,0.2);
+text-align:center;
+color:white;
+}
+
+.title{
+font-size:24px;
+margin-bottom:25px;
+}
+
+.input-group{
+margin-bottom:20px;
+text-align:left;
+}
+
+.input-group input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+outline:none;
+font-size:15px;
+}
+
+#classCode{
+background:#eaeaff;
+color:#555;
+}
+
+.btn{
+width:100%;
+padding:12px;
+background:white;
+color:#6a6dfc;
+font-size:16px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">Create New Classroom</div>
+
+<form id="classForm">
+
+<div class="input-group">
+<label>Class Name</label>
+<input type="text" id="className" placeholder="Enter class name">
+</div>
+
+<div class="input-group">
+<label>Class Code</label>
+<input type="text" id="classCode" readonly>
+</div>
+
+<button type="submit" class="btn">Create Class</button>
+
+</form>
+
+</div>
+
+<script>
+
+/* Generate Code */
+function generateCode(){
+const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+let code="EDU-";
+
+for(let i=0;i<5;i++){
+code+=chars.charAt(Math.floor(Math.random()*chars.length));
+}
+return code;
+}
+
+/* Set code */
+document.getElementById("classCode").value=generateCode();
+
+/* Submit */
+document.getElementById("classForm").addEventListener("submit",function(e){
+
+e.preventDefault();
+
+let name=document.getElementById("className").value;
+let code=document.getElementById("classCode").value;
+
+if(name===""){
+alert("Enter class name");
+return;
+}
+
+/* Get old classes */
+let classes=JSON.parse(localStorage.getItem("classes"))||[];
+
+/* Add new */
+classes.push({
+name:name,
+code:code
+});
+
+/* Save */
+localStorage.setItem("classes",JSON.stringify(classes));
+
+/* Go back */
+window.location.href="Tr.html";
+
+});
+
+</script>
+
+</body>
+</html>
