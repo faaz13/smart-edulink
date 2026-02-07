@@ -155,23 +155,23 @@
             background: #ffffff;
             padding: 6px;
         }
+
         .forgot {
-    text-align: right;
-    margin-top: -10px;
-    margin-bottom: 15px;
-}
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
 
-.forgot a {
-    font-size: 12px;
-    color: #ffffff;
-    text-decoration: underline;
-    font-weight: 500;
-}
+        .forgot a {
+            font-size: 12px;
+            color: #ffffff;
+            text-decoration: underline;
+            font-weight: 500;
+        }
 
-.forgot a:hover {
-    color: #e0e7ff;
-}
-
+        .forgot a:hover {
+            color: #e0e7ff;
+        }
     </style>
 </head>
 
@@ -188,14 +188,15 @@
             <button class="role-btn active" id="studentBtn">Student</button>
             <button class="role-btn" id="teacherBtn">Teacher</button>
         </div>
-        <form>
+        <form id="loginForm">
             <label>Username</label>
-            <input type="text" placeholder="Enter your username" required />
+            <input type="text" id="username" placeholder="Enter your username" required />
 
             <label>Password</label>
-            <input type="password" placeholder="Enter your password" required minlength="7" />
+            <input type="password" id="password" placeholder="Enter your password" required minlength="7" />
 
-    <!-- Forgot Password Link -->
+
+            <!-- Forgot Password Link -->
             <div class="forgot">
                 <a href="forgot-password.html">Forgot Password?</a>
             </div>
@@ -210,17 +211,47 @@
     <script>
         const studentBtn = document.getElementById('studentBtn');
         const teacherBtn = document.getElementById('teacherBtn');
+        const form = document.getElementById('loginForm');
+
+        let role = "student"; // default
+
+        /* Role Switch */
         studentBtn.addEventListener('click', () => {
             studentBtn.classList.add('active');
             teacherBtn.classList.remove('active');
+            role = "student";
         });
+
         teacherBtn.addEventListener('click', () => {
             teacherBtn.classList.add('active');
             studentBtn.classList.remove('active');
+            role = "teacher";
+        });
+
+        /* Login Submit */
+        form.addEventListener("submit", function (e) {
+            e.preventDefault(); // stop refresh
+
+            // Dummy login validation (you can change later)
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+
+            if (username === "" || password === "") {
+                alert("Please enter login details");
+                return;
+            }
+
+            /* Redirect based on role */
+            if (role === "teacher") {
+                window.location.href = "tr.html";
+            }
+            else {
+                window.location.href = "student.html";
+            }
         });
     </script>
+
 </body>
 
 
 </html>
-
