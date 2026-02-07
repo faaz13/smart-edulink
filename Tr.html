@@ -20,49 +20,35 @@ background:linear-gradient(90deg,#2b6cb0,#0ea5e9);
 }
 
 /* SIDEBAR */
-/* SIDEBAR */
 .sidebar{
-    width:260px;
-    background:linear-gradient(#4f46e5,#3b82f6);
-    padding:20px;
-    color:white;
+width:260px;
+background:linear-gradient(#4f46e5,#3b82f6);
+padding:20px;
+color:white;
 }
 
-/* LOGO BOX */
-.logo-box{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin-bottom:25px;
-}
-
-/* LOGO IMAGE */
-.logo-box img{
-    width:45px;     /* CONTROL SIZE */
-    height:45px;
-    object-fit:contain;
-    border-radius:8px;   /* optional */
-}
-
-/* HEADING */
-.logo-box h2{
-    font-size:22px;
-    font-weight:bold;
-}
-
-
-.sidebar h2{
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
 margin-bottom:25px;
 }
 
+.logo img{
+width:40px;
+height:40px;
+border-radius:8px;
+}
+
 .class-box{
-padding:18px;
+padding:15px;
 border-radius:12px;
-margin-bottom:15px;
+margin-bottom:12px;
 background:rgba(255,255,255,0.15);
 display:flex;
 justify-content:space-between;
 align-items:center;
+cursor:pointer;
 }
 
 /* MAIN */
@@ -82,14 +68,10 @@ padding:0 25px;
 border-bottom:1px solid rgba(255,255,255,0.2);
 }
 
-.top-icons{
-display:flex;
-gap:22px;
-}
-
 .icon{
 font-size:26px;
 cursor:pointer;
+margin-left:20px;
 }
 
 .icon:hover{
@@ -113,64 +95,83 @@ font-size:18px;
 <!-- SIDEBAR -->
 <div class="sidebar">
 
-    <!-- LOGO + NAME -->
-    <div class="logo-box">
-        <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" alt="EduLink Logo">
-        <h2><br>EduLink</h2>
-    </div>
-
-    <!-- Classes -->
-    <div id="classList"></div>
-
+<div class="logo">
+<img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg">
+<h2>EduLink</h2>
 </div>
 
-
-
-<!-- Classes load here -->
 <div id="classList"></div>
+
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
 <div class="topbar">
-<div class="top-icons">
 <span class="icon" onclick="openCreate()">➕</span>
 <span class="icon">❓</span>
 <span class="icon">👤</span>
 </div>
-</div>
 
 <div class="content">
-Click ➕ to create a new classroom 📚
+Click ➕ to create a new classroom
 </div>
 
 </div>
 
 <script>
 
-/* Load Classes */
+/* Open create page */
+function openCreate(){
+window.location.href="createclass.html";
+}
+
+/* Open class */
+function openClass(cls){
+localStorage.setItem("currentClass",JSON.stringify(cls));
+window.location.href="classroomOptions.html";
+}
+
+/* Delete class */
+function deleteClass(index){
+
+let confirmDelete=confirm("Delete this class?");
+if(!confirmDelete) return;
+
+let classes=JSON.parse(localStorage.getItem("classes"))||[];
+classes.splice(index,1);
+
+localStorage.setItem("classes",JSON.stringify(classes));
+loadClasses();
+}
+
+/* Load classes */
 function loadClasses(){
 
-let classes = JSON.parse(localStorage.getItem("classes")) || [];
+let classes=JSON.parse(localStorage.getItem("classes"))||[];
 
-let classList = document.getElementById("classList");
-classList.innerHTML = "";
+let classList=document.getElementById("classList");
+classList.innerHTML="";
 
 classes.forEach((cls,index)=>{
 
-let div = document.createElement("div");
-div.className = "class-box";
+let div=document.createElement("div");
+div.className="class-box";
 
-/* Name + Code + Delete */
-div.innerHTML = `
+/* Click open */
+div.onclick=function(){
+openClass(cls);
+};
+
+div.innerHTML=`
 <span>
 <b>${cls.name}</b><br>
 <small>${cls.code}</small>
 </span>
 
-<span style="cursor:pointer;"
-onclick="deleteClass(${index})">🗑️</span>
+<span onclick="event.stopPropagation();deleteClass(${index})">
+🗑️
+</span>
 `;
 
 classList.appendChild(div);
@@ -178,28 +179,6 @@ classList.appendChild(div);
 });
 }
 
-/* Delete Class 🗑️ */
-function deleteClass(i){
-
-let confirmDelete = confirm("Delete this class?");
-
-if(!confirmDelete) return;
-
-let classes = JSON.parse(localStorage.getItem("classes")) || [];
-
-classes.splice(i,1);
-
-localStorage.setItem("classes",JSON.stringify(classes));
-
-loadClasses();
-}
-
-/* Open Create Page ➕ */
-function openCreate(){
-window.location.href="createclass.html";
-}
-
-/* Run on page load */
 loadClasses();
 
 </script>
