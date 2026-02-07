@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Teacher Page – EduLink</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+/* BODY */
+body{
+height:100vh;
+display:flex;
+background:linear-gradient(90deg,#2b6cb0,#0ea5e9);
+}
+
+/* SIDEBAR */
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    background:linear-gradient(#4f46e5,#3b82f6);
+    padding:20px;
+    color:white;
+}
+
+/* LOGO BOX */
+.logo-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:25px;
+}
+
+/* LOGO IMAGE */
+.logo-box img{
+    width:45px;     /* CONTROL SIZE */
+    height:45px;
+    object-fit:contain;
+    border-radius:8px;   /* optional */
+}
+
+/* HEADING */
+.logo-box h2{
+    font-size:22px;
+    font-weight:bold;
+}
+
+
+.sidebar h2{
+margin-bottom:25px;
+}
+
+.class-box{
+padding:18px;
+border-radius:12px;
+margin-bottom:15px;
+background:rgba(255,255,255,0.15);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* MAIN */
+.main{
+flex:1;
+display:flex;
+flex-direction:column;
+}
+
+/* TOPBAR */
+.topbar{
+height:70px;
+display:flex;
+justify-content:flex-end;
+align-items:center;
+padding:0 25px;
+border-bottom:1px solid rgba(255,255,255,0.2);
+}
+
+.top-icons{
+display:flex;
+gap:22px;
+}
+
+.icon{
+font-size:26px;
+cursor:pointer;
+}
+
+.icon:hover{
+transform:scale(1.2);
+}
+
+/* CONTENT */
+.content{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <!-- LOGO + NAME -->
+    <div class="logo-box">
+        <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" alt="EduLink Logo">
+        <h2><br>EduLink</h2>
+    </div>
+
+    <!-- Classes -->
+    <div id="classList"></div>
+
+</div>
+
+
+
+<!-- Classes load here -->
+<div id="classList"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="topbar">
+<div class="top-icons">
+<span class="icon" onclick="openCreate()">➕</span>
+<span class="icon">❓</span>
+<span class="icon">👤</span>
+</div>
+</div>
+
+<div class="content">
+Click ➕ to create a new classroom 📚
+</div>
+
+</div>
+
+<script>
+
+/* Load Classes */
+function loadClasses(){
+
+let classes = JSON.parse(localStorage.getItem("classes")) || [];
+
+let classList = document.getElementById("classList");
+classList.innerHTML = "";
+
+classes.forEach((cls,index)=>{
+
+let div = document.createElement("div");
+div.className = "class-box";
+
+/* Name + Code + Delete */
+div.innerHTML = `
+<span>
+<b>${cls.name}</b><br>
+<small>${cls.code}</small>
+</span>
+
+<span style="cursor:pointer;"
+onclick="deleteClass(${index})">🗑️</span>
+`;
+
+classList.appendChild(div);
+
+});
+}
+
+/* Delete Class 🗑️ */
+function deleteClass(i){
+
+let confirmDelete = confirm("Delete this class?");
+
+if(!confirmDelete) return;
+
+let classes = JSON.parse(localStorage.getItem("classes")) || [];
+
+classes.splice(i,1);
+
+localStorage.setItem("classes",JSON.stringify(classes));
+
+loadClasses();
+}
+
+/* Open Create Page ➕ */
+function openCreate(){
+window.location.href="createclass.html";
+}
+
+/* Run on page load */
+loadClasses();
+
+</script>
+
+</body>
+</html>
