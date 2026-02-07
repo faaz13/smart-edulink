@@ -12,20 +12,23 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #2563eb, #1e40af);
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         #divide {
-            background-color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
             width: 72%;
             max-width: 900px;
             padding: 40px 50px;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            border-radius: 20px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
         }
+
 
         /* Header */
         .brand {
@@ -34,15 +37,14 @@
         }
 
         .brand h1 {
-            color: #1e40af;
-            font-size: 34px;
-            margin-bottom: 8px;
+            color: #ffffff;
         }
 
+
         .brand p {
-            color: #6b7280;
-            font-size: 16px;
+            color: #e0e7ff;
         }
+
 
         /* Role switch */
         .role-switch {
@@ -56,13 +58,13 @@
             padding: 14px 0;
             border: none;
             border-radius: 30px;
-            background: #e0e7ff;
-            color: #1e40af;
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
             font-size: 17px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
+
 
         .role-btn:hover {
             transform: translateY(-2px);
@@ -70,9 +72,10 @@
         }
 
         .role-btn.active {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            color: white;
+            background: #ffffff;
+            color: #4f46e5;
         }
+
 
         /* Form section */
         #formSection {
@@ -81,7 +84,7 @@
         }
 
         .section-title {
-            color: #9ca3af;
+            color: #0f1218;
             font-size: 18px;
             margin-bottom: 25px;
         }
@@ -103,17 +106,17 @@
         input {
             width: 100%;
             padding: 10px 14px;
-            border-radius: 10px;
-            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            border: none;
             font-size: 14px;
-            transition: 0.2s;
         }
+
 
         input:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
         }
+
 
         .field {
             margin-bottom: 18px;
@@ -126,21 +129,15 @@
         }
 
         .submit-btn a {
-            display: inline-block;
-            padding: 14px 40px;
-            border-radius: 30px;
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 600;
-            transition: 0.3s;
+            background: #ffffff;
+            color: #4f46e5;
         }
 
+
         .submit-btn a:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+            background: #e0e7ff;
         }
+
 
         @media (max-width: 768px) {
             #divide {
@@ -167,7 +164,6 @@
 </head>
 
 <body>
-
     <div id="divide">
 
         <div class="brand">
@@ -264,6 +260,5 @@
     </script>
 
 </body>
-
 
 </html>
