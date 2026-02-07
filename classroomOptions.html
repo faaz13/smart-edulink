@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EduLink Classroom</title>
+
+<style>
+body{
+min-height:100vh;
+background:linear-gradient(135deg,#2563eb,#1e40af);
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:Segoe UI;
+}
+
+#main{
+width:80%;
+max-width:900px;
+background:white;
+padding:35px;
+border-radius:16px;
+text-align:center;
+}
+
+h2{
+color:#1e40af;
+margin-bottom:25px;
+}
+
+.options{
+background:#2563eb;
+color:white;
+padding:18px;
+margin:12px;
+border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="main">
+
+<h2 id="classTitle">Classroom</h2>
+
+<div class="options">Attendance</div>
+<div class="options">Marks</div>
+<div class="options">Schedule Class</div>
+<div class="options">Chat</div>
+
+</div>
+
+<script>
+
+/* Show selected class */
+let cls=JSON.parse(localStorage.getItem("currentClass"));
+
+if(cls){
+document.getElementById("classTitle").innerText=
+cls.name+" – Classroom";
+}
+
+</script>
+
+</body>
+</html>
