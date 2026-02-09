@@ -19,25 +19,25 @@ body{
     align-items: center;
 }
 
-/* MAIN BOX */
+/* Main Card */
 #main{
-    width: 80%;
-    max-width: 900px;
+    width: 90%;
+    max-width: 1100px;
     background: white;
-    padding: 35px 40px;
+    padding: 30px 35px;
     border-radius: 16px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 
-/* HEADING */
+/* Header */
 #heading{
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
-/* BRAND */
+/* Brand */
 #brand{
     display: flex;
     align-items: center;
@@ -45,8 +45,8 @@ body{
 }
 
 #brand img{
-    height: 42px;
-    width: 42px;
+    height: 40px;
+    width: 40px;
 }
 
 #brand span{
@@ -55,23 +55,22 @@ body{
     color: #1e40af;
 }
 
-/* CLASS TITLE */
+/* Title */
 #heading h2{
     text-align: center;
     color: #1e40af;
     font-size: 26px;
 }
 
-/* LOGOUT */
+/* Logout */
 #log_out{
     text-align: center;
 }
 
 #log_out_photo{
-    height: 35px;
-    width: 35px;
+    height: 32px;
+    width: 32px;
     border-radius: 50%;
-    transition: 0.3s;
 }
 
 #log_out a{
@@ -81,52 +80,55 @@ body{
     font-weight: 600;
 }
 
-#log_out:hover img{
-    transform: scale(1.1);
-}
-
-/* OPTIONS GRID */
-#option_block{
+/* Layout */
+#dashboard{
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 260px 1fr;
     gap: 25px;
 }
 
-.options{
+/* Vertical Menu */
+#menu{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-btn{
+    padding: 16px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #2563eb, #1e40af);
-    padding: 24px;
-    border-radius: 14px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
     text-align: center;
+    cursor: pointer;
     transition: 0.3s;
 }
 
-.options:hover{
-    transform: translateY(-4px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+.menu-btn:hover,
+.menu-btn.active{
+    transform: translateX(5px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.25);
 }
 
-.options a{
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
-    font-weight: 600;
-    display: block;
+/* Content Area */
+#content{
+    background: #f9fafb;
+    border-radius: 14px;
+    padding: 25px;
+    min-height: 350px;
 }
 
-/* MOBILE */
-@media(max-width:768px){
-    #option_block{
-        grid-template-columns: 1fr;
-    }
+#content h3{
+    color: #1e40af;
+    margin-bottom: 15px;
+}
 
-    #heading{
+/* Mobile */
+@media(max-width:900px){
+    #dashboard{
         grid-template-columns: 1fr;
-        gap: 20px;
-        text-align: center;
-    }
-
-    #brand{
-        justify-content: center;
     }
 }
 </style>
@@ -136,48 +138,38 @@ body{
 
 <div id="main">
 
-    <!-- HEADING -->
     <div id="heading">
-
         <div id="brand">
             <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg">
             <span>EduLink</span>
         </div>
 
-        <!-- Class name will come here -->
-        <h2 id="classTitle">Classroom Dashboard</h2>
+        <h2>Classroom Dashboard</h2>
 
         <div id="log_out">
-            <a href="login.html">
+            <a href="logOut.html">
                 <img id="log_out_photo"
-                src="https://raw.githubusercontent.com/faaz13/smart-edulink/main/log_out.jpeg">
+                     src="https://raw.githubusercontent.com/faaz13/smart-edulink/main/log_out.jpeg">
                 <br>Log Out
             </a>
         </div>
-
     </div>
 
-    <!-- OPTIONS -->
-    <div id="option_block">
+    <!-- Dashboard -->
+    <div id="dashboard">
 
-        <div class="options">
-            <a href="#">Classroom Options</a>
+        <!-- Vertical Menu -->
+        <div id="menu">
+            <div class="menu-btn" onclick="loadContent('attendance', this)">Attendance</div>
+            <div class="menu-btn" onclick="loadContent('marks', this)">Marks</div>
+            <div class="menu-btn" onclick="loadContent('schedule', this)">Schedule Class</div>
+            <div class="menu-btn" onclick="loadContent('chat', this)">Chat With Students</div>
         </div>
 
-        <div class="options">
-            <a href="attendence.html">Attendance</a>
-        </div>
-
-        <div class="options">
-            <a href="marks.html">Marks</a>
-        </div>
-
-        <div class="options">
-            <a href="schedualClass.html">Schedule Class</a>
-        </div>
-
-        <div class="options">
-            <a href="chat.html">Chat With Students</a>
+        <!-- Content Area -->
+        <div id="content">
+            <h3>Welcome 👋</h3>
+            <p>Select an option from the left to continue.</p>
         </div>
 
     </div>
@@ -185,18 +177,37 @@ body{
 </div>
 
 <script>
+function loadContent(type, element){
+    document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
 
-/* Get selected class from dashboard */
-let currentClass =
-JSON.parse(localStorage.getItem("currentClass"));
+    const content = document.getElementById("content");
 
-if(currentClass){
-
-document.getElementById("classTitle").innerText =
-currentClass.name + " – Classroom";
-
+    if(type === 'attendance'){
+        content.innerHTML = `
+            <h3>Attendance</h3>
+            <p>Here you can mark and view student attendance.</p>
+        `;
+    }
+    else if(type === 'marks'){
+        content.innerHTML = `
+            <h3>Marks</h3>
+            <p>Upload, update and view student marks.</p>
+        `;
+    }
+    else if(type === 'schedule'){
+        content.innerHTML = `
+            <h3>Schedule Class</h3>
+            <p>Create and manage upcoming classes.</p>
+        `;
+    }
+    else if(type === 'chat'){
+        content.innerHTML = `
+            <h3>Chat With Students</h3>
+            <p>Start conversation with your students.</p>
+        `;
+    }
 }
-
 </script>
 
 </body>
