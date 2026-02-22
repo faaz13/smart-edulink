@@ -181,11 +181,11 @@
             <button class="role-btn" id="teacherBtn">Teacher</button>
         </div>
 
-        <div id="formSection">
-            <div class="section-title">Personal Details</div>
+        <!-- STUDENT SIGNUP -->
+        <div id="studentForm" style="display:none;">
+            <div class="section-title">Student Details</div>
 
             <div class="outer1">
-
                 <div>
                     <div class="field">
                         <label>Full Name</label>
@@ -197,7 +197,7 @@
                         <input type="text" placeholder="Choose a username">
                     </div>
 
-                    <div class="field" id="studentField">
+                    <div class="field">
                         <label>College Roll No</label>
                         <input type="text" placeholder="Enter roll number">
                     </div>
@@ -216,44 +216,92 @@
 
                     <div class="field">
                         <label>Create Password</label>
-                        <input type="password" placeholder="Create password" minlength="7">
+                        <input type="password" minlength="7">
                     </div>
 
                     <div class="field">
                         <label>Confirm Password</label>
-                        <input type="password" placeholder="Confirm password" minlength="7">
+                        <input type="password" minlength="7">
                     </div>
                 </div>
-
             </div>
 
             <div class="submit-btn">
-                <a href="ass1.html">Create Account</a>
+                <a href="student-dashboard.html">Create Student Account</a>
             </div>
-            <p style="text-align:center; margin-top:15px;">
-                Already have an account?
-                <a href="login.html">Login</a>
-            </p>
+        </div>
 
+
+        <!-- TEACHER SIGNUP -->
+        <div id="teacherForm" style="display:none;">
+            <div class="section-title">Teacher Details</div>
+
+            <div class="outer1">
+                <div>
+                    <div class="field">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Enter your name">
+                    </div>
+
+                    <div class="field">
+                        <label>Teacher ID</label>
+                        <input type="text" placeholder="Enter Teacher ID">
+                    </div>
+
+                    <div class="field">
+                        <label>Department</label>
+                        <input type="text" placeholder="Enter department">
+                    </div>
+
+                    <div class="field">
+                        <label>Mobile Number</label>
+                        <input type="text" placeholder="Enter mobile number">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter your email">
+                    </div>
+
+                    <div class="field">
+                        <label>Create Password</label>
+                        <input type="password" minlength="7">
+                    </div>
+
+                    <div class="field">
+                        <label>Confirm Password</label>
+                        <input type="password" minlength="7">
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-btn">
+                <a href="teacher-dashboard.html">Create Teacher Account</a>
+            </div>
         </div>
     </div>
 
     <script>
         const studentBtn = document.getElementById("studentBtn");
         const teacherBtn = document.getElementById("teacherBtn");
-        const formSection = document.getElementById("formSection");
-        const studentField = document.getElementById("studentField");
+
+        const studentForm = document.getElementById("studentForm");
+        const teacherForm = document.getElementById("teacherForm");
 
         studentBtn.addEventListener("click", () => {
-            formSection.style.display = "block";
-            studentField.style.display = "block";
+            studentForm.style.display = "block";
+            teacherForm.style.display = "none";
+
             studentBtn.classList.add("active");
             teacherBtn.classList.remove("active");
         });
 
         teacherBtn.addEventListener("click", () => {
-            formSection.style.display = "block";
-            studentField.style.display = "none";
+            teacherForm.style.display = "block";
+            studentForm.style.display = "none";
+
             teacherBtn.classList.add("active");
             studentBtn.classList.remove("active");
         });
