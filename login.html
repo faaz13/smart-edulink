@@ -188,72 +188,82 @@
             <button class="role-btn active" id="studentBtn">Student</button>
             <button class="role-btn" id="teacherBtn">Teacher</button>
         </div>
-        <form id="loginForm">
-            <label>Username</label>
-            <input type="text" id="username" placeholder="Enter your username" required />
+        <!-- Student Login -->
+<div id="studentLogin">
+    <form id="studentForm">
+        <label>Username</label>
+        <input type="text" id="studentUsername" placeholder="Enter your username" required />
 
-            <label>Password</label>
-            <input type="password" id="password" placeholder="Enter your password" required minlength="7" />
+        <label>Password</label>
+        <input type="password" id="studentPassword" placeholder="Enter your password" required minlength="7" />
 
+        <div class="forgot">
+            <a href="forgot-password.html">Forgot Password?</a>
+        </div>
 
-            <!-- Forgot Password Link -->
-            <div class="forgot">
-                <a href="forgot-password.html">Forgot Password?</a>
-            </div>
+        <button type="submit" class="login-btn">Login as Student</button>
+    </form>
+</div>
 
-            <button type="submit" class="login-btn">Login</button>
-        </form>
+<!-- Teacher Login -->
+<div id="teacherLogin" style="display: none;">
+    <form id="teacherForm">
+        <label>Teacher ID</label>
+        <input type="text" id="teacherUsername" placeholder="Enter your Teacher ID" required />
+
+        <label>Password</label>
+        <input type="password" id="teacherPassword" placeholder="Enter your password" required minlength="7" />
+
+        <div class="forgot">
+            <a href="forgot-password.html">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="login-btn">Login as Teacher</button>
+    </form>
+</div>
 
         <div class="extra">
             Don’t have an account? <a href="SIGNUP.html">Create one</a>
         </div>
     </div>
     <script>
-        const studentBtn = document.getElementById('studentBtn');
-        const teacherBtn = document.getElementById('teacherBtn');
-        const form = document.getElementById('loginForm');
+const studentBtn = document.getElementById('studentBtn');
+const teacherBtn = document.getElementById('teacherBtn');
 
-        let role = "student"; // default
+const studentDiv = document.getElementById('studentLogin');
+const teacherDiv = document.getElementById('teacherLogin');
 
-        /* Role Switch */
-        studentBtn.addEventListener('click', () => {
-            studentBtn.classList.add('active');
-            teacherBtn.classList.remove('active');
-            role = "student";
-        });
+/* Role Switch */
+studentBtn.addEventListener('click', () => {
+    studentBtn.classList.add('active');
+    teacherBtn.classList.remove('active');
 
-        teacherBtn.addEventListener('click', () => {
-            teacherBtn.classList.add('active');
-            studentBtn.classList.remove('active');
-            role = "teacher";
-        });
+    studentDiv.style.display = "block";
+    teacherDiv.style.display = "none";
+});
 
-        /* Login Submit */
-        form.addEventListener("submit", function (e) {
-            e.preventDefault(); // stop refresh
+teacherBtn.addEventListener('click', () => {
+    teacherBtn.classList.add('active');
+    studentBtn.classList.remove('active');
 
-            // Dummy login validation (you can change later)
-            let username = document.getElementById("username").value;
-            let password = document.getElementById("password").value;
+    teacherDiv.style.display = "block";
+    studentDiv.style.display = "none";
+});
 
-            if (username === "" || password === "") {
-                alert("Please enter login details");
-                return;
-            }
+/* Student Login */
+document.getElementById("studentForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    window.open("student.html", "_self");
+});
 
-            /* Redirect based on role */
-            if (role === "teacher") {
-                window.open("tr.html", "_self"); 
-            }
-            else {
-                window.open("student.html", "_self");
-            }
-        });
-    </script>
+/* Teacher Login */
+document.getElementById("teacherForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    window.open("tr.html", "_self");
+});
+</script>
 
 </body>
 
 
 </html>
-
-
