@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduLink – Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 38px 35px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .logo-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 14px;
+            background: #ffffff;
+            padding: 6px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.95;
+            margin-bottom: 30px;
+        }
+
+        .role-switch {
+            display: flex;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 30px;
+            padding: 6px;
+            margin-bottom: 25px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .role-btn.active {
+            background: #ffffff;
+            color: #4f46e5;
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            font-size: 13px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            margin-bottom: 18px;
+            transition: 0.3s;
+        }
+
+        input.error {
+            border: 2px solid #ff4d4d;
+        }
+
+        input.success {
+            border: 2px solid #4caf50;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            border-radius: 30px;
+            border: none;
+            background: #ffffff;
+            color: #4f46e5;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .message-box {
+            font-size: 14px;
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+            backdrop-filter: blur(6px);
+        }
+
+        .error-box {
+            background: rgba(255, 77, 77, 0.35);
+            color: #ffffff;
+            border: 1px solid #ff4d4d;
+            box-shadow: 0 0 12px rgba(255, 77, 77, 0.6);
+        }
+
+        .success-box {
+            background: rgba(76, 175, 80, 0.35);
+            color: #ffffff;
+            border: 1px solid #4caf50;
+            box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+        }
+        .forgot {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        .forgot a {
+            font-size: 12px;
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .extra {
+            margin-top: 22px;
+            font-size: 13px;
+            opacity: 0.95;
+        }
+
+        .extra a {
+            color: #ffffff;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+<div class="login-container">
+    <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" class="logo-img">
+    <h1>Log in to your account</h1>
+    <!-- <div class="subtitle">Log in to continue your learning journey</div> -->
+
+    <div class="role-switch">
+        <button class="role-btn active" id="studentBtn">Student</button>
+        <button class="role-btn" id="teacherBtn">Teacher</button>
+    </div>
+
+    <div id="studentLogin">
+        <form id="studentForm">
+            <div class="message-box" id="studentMessage"></div>
+
+            <label>Username</label>
+            <input type="text" id="studentUsername" placeholder="Enter your username"/>
+
+            <label>Password</label>
+            <input type="password" id="studentPassword" minlength="6" placeholder="Enter your password"/>
+
+            <button type="submit" class="login-btn">Login as Student</button>
+        </form>
+    </div>
+
+    <div id="teacherLogin" style="display:none;">
+        <form id="teacherForm">
+            <div class="message-box" id="teacherMessage"></div>
+
+            <label>Username</label>
+            <input type="text" id="teacherUsername"  placeholder="Enter your username"/>
+
+            <label>Password</label>
+            <input type="password" id="teacherPassword" minlength="6" placeholder="Enter your password"/>
+
+            <button type="submit" class="login-btn">Login as Teacher</button>
+        </form>
+    </div>
+
+    <div class="extra">
+        Don’t have an account? <a href="SIGNUP.html">Create one</a>
+    </div>
+</div>
+
+<script>
+const API_BASE = "https://edulink-backend-o3hw.onrender.com/api/v1";
+
+const studentBtn = document.getElementById('studentBtn');
+const teacherBtn = document.getElementById('teacherBtn');
+const studentDiv = document.getElementById('studentLogin');
+const teacherDiv = document.getElementById('teacherLogin');
+
+studentBtn.onclick = () => {
+    studentBtn.classList.add('active');
+    teacherBtn.classList.remove('active');
+    studentDiv.style.display = "block";
+    teacherDiv.style.display = "none";
+};
+
+teacherBtn.onclick = () => {
+    teacherBtn.classList.add('active');
+    studentBtn.classList.remove('active');
+    teacherDiv.style.display = "block";
+    studentDiv.style.display = "none";
+};
+
+function showMessage(id, type, text) {
+    const box = document.getElementById(id);
+    box.className = "message-box " + (type === "error" ? "error-box" : "success-box");
+    box.innerText = text;
+    box.style.display = "block";
+}
+
+function clearMessage(id) {
+    const box = document.getElementById(id);
+    box.style.display = "none";
+}
+
+async function handleLogin(formId, messageId, url, redirectPage) {
+    const form = document.getElementById(formId);
+    const button = form.querySelector(".login-btn");
+    const username = form.querySelector("input[type='text']");
+    const password = form.querySelector("input[type='password']");
+
+    clearMessage(messageId);
+    username.classList.remove("error");
+    password.classList.remove("error");
+
+    button.disabled = true;
+    button.innerText = "Logging in...";
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                username: username.value.trim(),
+                password: password.value.trim()
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showMessage(messageId, "success", "Login successful! Redirecting...");
+            username.classList.add("success");
+            password.classList.add("success");
+            setTimeout(() => {
+                form.reset();
+                window.location.href = redirectPage;
+            }, 1200);
+        } else {
+            if (data.message === "Enter username") {
+                showMessage(messageId, "error", "Username is required.");
+                username.classList.add("error");
+            }
+            else if (data.message === "User does not exist") {
+                showMessage(messageId, "error", "Account not found.");
+                username.classList.add("error");
+            }
+            else if (data.message === "Password Incorrect") {
+                showMessage(messageId, "error", "Incorrect password.");
+                password.classList.add("error");
+            }
+            else {
+                showMessage(messageId, "error", data.message || "Login failed.");
+            }
+        }
+
+    } catch (err) {
+        showMessage(messageId, "error", "Server not reachable.");
+    }
+
+    button.disabled = false;
+    button.innerText = formId === "studentForm" ? "Login as Student" : "Login as Teacher";
+}
+
+document.getElementById("studentForm").onsubmit = function(e){
+    e.preventDefault();
+    handleLogin("studentForm", "studentMessage", `${API_BASE}/login/student`, "studentDashboard.html");
+};
+
+document.getElementById("teacherForm").onsubmit = function(e){
+    e.preventDefault();
+    handleLogin("teacherForm", "teacherMessage", `${API_BASE}/login/teacher`, "tr.html");
+};
+</script>
+
+</body>
+</html>
