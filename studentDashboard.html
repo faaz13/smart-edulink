@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edu Link Dashboard</title>
+
+<style>
+/* ===== GLOBAL ===== */
+/* ===== GLOBAL ===== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI, sans-serif;
+}
+
+body{
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  color:#333;
+}
+
+/* ===== HEADER ===== */
+.header{
+  height:70px;
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Logo */
+.logo{
+  border:2px solid white;
+  border-radius:25px;
+  padding:6px 16px;
+  font-weight:600;
+  font-size:15px;
+}
+
+/* Center Icon */
+.center-icon{
+  width:34px;
+  height:34px;
+  border:2px solid white;
+  transform:rotate(45deg);
+}
+
+/* Profile Circle */
+.profile{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:2px solid white;
+}
+
+/* ===== LAYOUT ===== */
+.container{
+  display:flex;
+  height:calc(100vh - 70px);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:230px;
+  background:white;
+  border-right:1px solid #dbe3ff;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:20px 15px;
+  box-shadow:4px 0 12px rgba(0,0,0,0.05);
+}
+
+/* Menu buttons */
+.menu{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.menu button{
+  background:#e8f0ff;
+  border:none;
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  padding:12px;
+  border-radius:8px;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.25s;
+  font-weight:600;
+}
+
+.menu button:hover{
+  background:#6a89ee;
+  color:white;
+}
+
+.menu button.active{
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  color:white;
+}
+
+/* Bottom menu */
+.bottom-menu{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main{
+  flex:1;
+  padding:30px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  overflow:auto;
+}
+
+/* Big Dynamic Container */
+.content-box{
+  width:85%;
+  min-height:80%;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.06);
+  padding:30px;
+}
+
+/* ===== SHOW CLASS UI ===== */
+
+.classes-container{
+  width:100%;
+}
+
+.section-title{
+  font-size:32px;
+  color:#1e40af;
+  margin-bottom:20px;
+  font-weight:700;
+}
+
+.class-cards{
+  display:flex;
+  gap:18px;
+  margin-bottom:35px;
+  flex-wrap:wrap;
+}
+
+.class-card{
+  background:#e8f0ff;
+  padding:18px 22px;
+  border-radius:12px;
+  min-width:220px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05);
+  transition:0.2s ease;
+}
+
+.class-card:hover{
+  transform:translateY(-4px);
+  cursor: pointer;
+}
+
+.class-card h3{
+  font-size:20px;
+  color:#444;
+}
+
+.class-card p{
+  font-size:15px;
+  color:#666;
+  margin-top:6px;
+}
+
+/* ===== CALENDAR ===== */
+
+.calendar-box{
+  background:#f3f4f6;
+  padding:22px;
+  border-radius:16px;
+}
+
+.calendar-title{
+  font-size:28px;
+  color:#1e40af;
+  margin-bottom:18px;
+  font-weight:700;
+}
+
+.calendar-table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.calendar-table th{
+  background:#1e40af;
+  color:white;
+  padding:12px;
+  font-size:16px;
+  text-align:left;
+}
+
+.calendar-table td{
+  padding:14px;
+  font-size:15px;
+  color:#444;
+}
+
+.calendar-table tr:nth-child(even){
+  background:#f9fafb;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .sidebar{width:190px;}
+  .content-box{width:95%;}
+}
+
+@media(max-width:650px){
+  .container{flex-direction:column;}
+
+  .sidebar{
+    flex-direction:row;
+    width:100%;
+    height:auto;
+    overflow-x:auto;
+  }
+
+  .menu{
+    flex-direction:row;
+  }
+
+  .bottom-menu{
+    flex-direction:row;
+  }
+
+  .main{
+    padding:15px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <div class="logo">Edu Link</div>
+  <div class="center-icon"></div>
+  <div class="profile"></div>
+</div>
+
+<div class="container">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+
+    <div class="menu">
+      <button class="menu-btn active">Join a Class</button>
+      <button class="menu-btn">Show Existing Class</button>
+      <button class="menu-btn">To Do List</button>
+      <button class="menu-btn">Chat</button>
+    </div>
+
+    <div class="bottom-menu">
+      <button class="menu-btn">Settings</button>
+      <button class="menu-btn">Help</button>
+    </div>
+
+  </div>
+
+  <!-- ===== MAIN CONTENT AREA ===== -->
+  <div class="main">
+    <div class="content-box">
+      Main Content Area
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+/* ================= STUDENT OBJECT ================= */
+
+const studentData = {
+  id: 124102029,
+  name: "Faaz",
+  classes: [
+    {
+      className: "Data Structures",
+      instructor: "Prof. Sharma",
+      schedule: {
+        Monday: "10:00 AM - 11:00 AM",
+        Wednesday: "10:00 AM - 11:00 AM",
+        Friday: "10:00 AM - 11:00 AM"
+      }
+    },
+    {
+      className: "Operating Systems",
+      instructor: "Prof. Mehta",
+      schedule: {
+        Tuesday: "1:00 PM - 2:30 PM",
+        Thursday: "1:00 PM - 2:30 PM"
+      }
+    }
+  ]
+};
+
+const buttons = document.querySelectorAll(".menu-btn");
+const contentBox = document.querySelector(".content-box");
+
+buttons.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    buttons.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    if(btn.innerText === "Show Existing Class"){
+        renderClasses();
+    } 
+    else if(btn.innerText === "Chat"){
+    contentBox.innerHTML = `
+        <iframe src="chat.html" 
+        style="width:100%;height:500px;border:none;border-radius:12px;">
+        </iframe>
+    `;
+}
+    else {
+        contentBox.innerHTML = "<h2>Coming Soon...</h2>";
+    }
+  });
+});
+
+/* ================= RENDER CLASS CARDS ================= */
+
+function renderClasses(){
+
+  let html = `
+  <div class="classes-container">
+    <div class="section-title">Your Classes</div>
+    <div class="class-cards">
+  `;
+
+  studentData.classes.forEach((cls,index)=>{
+    html += `
+      <div class="class-card" onclick="openClass(${index})">
+        <h3>${cls.className}</h3>
+        <p>${cls.instructor}</p>
+      </div>
+    `;
+  });
+
+  html += `
+    </div>
+  </div>
+  `;
+
+  contentBox.innerHTML = html;
+}
+
+
+/* ================= OPEN CLASS PAGE ================= */
+
+function openClass(index){
+
+  const selectedClass = studentData.classes[index];
+
+  // Save selected class in localStorage
+  localStorage.setItem("selectedClass", JSON.stringify(selectedClass));
+
+  // Redirect to form page
+  window.location.href = "ExistingClassView.html";
+}
+
+</script>
+
+</body>
+</html>
