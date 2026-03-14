@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom View</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: rgba(99, 102, 241, 0.1);
+            --primary-hover: #4f46e5;
+            --secondary: #94a3b8;
+            --white: #ffffff;
+            --bg-light: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-color: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite alternate;
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 100% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        /* Ambient background blobs */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.2;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: #6366f1; }
+        .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #3b82f6; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-right: 1px solid var(--border-color);
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 8px 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .back-btn:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-4px);
+        }
+
+        .nav-item {
+            padding: 14px 18px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(59, 130, 246, 0.2));
+            border-color: rgba(99, 102, 241, 0.3);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 10;
+            position: relative;
+        }
+
+        .header {
+            height: 85px;
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .class-name {
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #studentRoll {
+            font-size: 14px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            color: var(--secondary);
+        }
+
+        .view-port {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--white);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-box::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #6366f1, #3b82f6);
+            opacity: 0.5;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-box:hover::after {
+            opacity: 1;
+        }
+
+        .stat-val {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--white);
+            display: block;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(255,255,255,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--secondary);
+            text-align: left;
+            padding: 16px 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 0.95rem;
+            color: var(--white);
+        }
+        
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* Chat Container */
+        #chat-view iframe {
+            width: 100%;
+            height: calc(100vh - 180px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2); 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3); 
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <aside class="sidebar">
+        <a class="back-btn" href="showclass.html">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Dashboard
+        </a>
+        <div class="nav-item active" onclick="switchTab('marks', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            Marks
+        </div>
+        <div class="nav-item" onclick="switchTab('attendance', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Attendance
+        </div>
+        <div class="nav-item" onclick="switchTab('schedule', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Schedule
+        </div>
+        <div class="nav-item" onclick="switchTab('chat', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            Class Chat
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="class-name" id="classTitle">Loading Class...</div>
+            <div id="studentRoll">Roll: --</div>
+        </header>
+
+        <div class="view-port">
+
+            <!-- Marks View -->
+            <section id="marks-view">
+                <div class="card">
+                    <h2>Performance Summary</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box"><span class="stat-val" id="val-mid1">0 / 15</span><span class="stat-label">Mid Sem 1</span></div>
+                        <div class="stat-box"><span class="stat-val" id="val-mid2">0 / 15</span><span class="stat-label">Mid Sem 2</span></div>
+                        <div class="stat-box"><span class="stat-val" id="val-ta">0 / 10</span><span class="stat-label">Teacher Assessment</span></div>
+                        <div class="stat-box"><span class="stat-val" id="val-att">0 / 10</span><span class="stat-label">Attendance</span></div>
+                        <div class="stat-box"><span class="stat-val" id="val-endsem">0 / 50</span><span class="stat-label">End Semester</span></div>
+                        <div class="stat-box" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(59, 130, 246, 0.4)); border-color: rgba(99, 102, 241, 0.5);">
+                            <span class="stat-val" id="val-total" style="color: white; text-shadow: 0 4px 15px rgba(0,0,0,0.3);">0 / 100</span>
+                            <span class="stat-label" style="color: rgba(255,255,255,0.9);">Total</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance View -->
+            <section id="attendance-view" class="hidden">
+                <div class="card">
+                    <h2>Attendance Summary</h2>
+                    <div class="stat-box" style="margin-bottom: 25px; max-width: 320px;">
+                        <span class="stat-val" id="att-count">0</span>
+                        <span class="stat-label">Total Classes Attended</span>
+                    </div>
+                    <p style="color: var(--secondary); font-size: 15px;">Detailed attendance records are managed by your instructor and synced automatically.</p>
+                </div>
+            </section>
+
+            <!-- Schedule View -->
+            <section id="schedule-view" class="hidden">
+                <div class="card">
+                    <h2>Weekly Timetable</h2>
+                    <table id="scheduleTable">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Time</th>
+                                <th>Topic</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Chat View -->
+            <section id="chat-view" class="hidden">
+                <iframe id="chatFrame"></iframe>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = "https://edulink-backend-o3hw.onrender.com/api/v1";
+        const params = new URLSearchParams(window.location.search);
+        const classId = params.get('classId');
+        let currentStudentRoll = "";
+
+        if (!classId) window.location.href = "showclass.html";
+
+        async function init() {
+            try {
+                // 1. Get User Info
+                const userRes = await fetch(`${API_BASE}/currentUser`, { method: "POST", credentials: "include" });
+                const userData = await userRes.json();
+                if (userData.success) {
+                    currentStudentRoll = userData.user.collegerollnumber;
+                    document.getElementById('studentRoll').innerText = "Roll: " + currentStudentRoll;
+                }
+
+                // 2. Get Class Details
+                const classRes = await fetch(`${API_BASE}/details/${classId}`, { credentials: "include" });
+                const classData = await classRes.json();
+                if (classData.success) {
+                    const cls = classData.data;
+                    document.getElementById('classTitle').innerText = `${cls.name} (${cls.code})`;
+                    renderSchedule(cls.timetable);
+
+                    // Filter student's own marks and attendance from the class data
+                    const me = cls.students.find(s => s.studentRoll === currentStudentRoll);
+                    if (me) {
+                        renderMarks(me.marks || {}, me.attendance || { present: 0, total: 0 });
+                        renderAttendance(me.attendance || { present: 0, total: 0 });
+                    }
+                }
+
+                // Set Chat URL
+                document.getElementById('chatFrame').src = `chat.html?classId=${classId}`;
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function getAttendanceMarks(attendance) {
+            if (!attendance || attendance.total === 0) return 0;
+            let percent = (attendance.present / attendance.total) * 100;
+            if (percent > 90) return 10;
+            if (percent > 80) return 9;
+            if (percent > 75) return 8;
+            return 0;
+        }
+
+        function renderMarks(m, attendance) {
+            let m1 = m.mid1 || 0;
+            let m2 = m.mid2 || 0;
+            let ta = m.teacherAssessment || 0;
+            let es = m.endsem || 0;
+            let att = getAttendanceMarks(attendance);
+            let total = m1 + m2 + ta + es + att;
+
+            document.getElementById('val-mid1').innerText = m1 + " / 15";
+            document.getElementById('val-mid2').innerText = m2 + " / 15";
+            document.getElementById('val-ta').innerText = ta + " / 10";
+            document.getElementById('val-att').innerText = att + " / 10";
+            document.getElementById('val-endsem').innerText = es + " / 50";
+            document.getElementById('val-total').innerText = total + " / 100";
+        }
+
+        function renderAttendance(a) {
+            document.getElementById('att-count').innerText = a.present || 0;
+        }
+
+        function renderSchedule(list) {
+            const tbody = document.querySelector('#scheduleTable tbody');
+            tbody.innerHTML = "";
+            list.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${item.day}</td><td>${item.time}</td><td>${item.topic}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function switchTab(tab, el) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+
+            ['marks', 'attendance', 'schedule', 'chat'].forEach(id => {
+                document.getElementById(id + '-view').classList.add('hidden');
+            });
+            document.getElementById(tab + '-view').classList.remove('hidden');
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
