@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduLink – Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite alternate;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f8fafc;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 100% 0%;
+            }
+
+            100% {
+                background-position: 0% 100%;
+            }
+        }
+
+        /* Ambient blobs */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.5;
+            border-radius: 50%;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        .blob-1 {
+            top: 20%;
+            left: -5%;
+            width: 350px;
+            height: 350px;
+            background: #4f46e5;
+        }
+
+        .blob-2 {
+            bottom: -10%;
+            right: 10%;
+            width: 450px;
+            height: 450px;
+            background: #0ea5e9;
+            animation-delay: -3s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(30px, -40px) scale(1.1);
+            }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 18px;
+            background: #ffffff;
+            padding: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05) rotate(-5deg);
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .role-switch {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            padding: 6px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            background: transparent;
+            color: #94a3b8;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .role-btn.active {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            font-size: 13px;
+            margin-bottom: 8px;
+            display: block;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #64748b;
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        input.success {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #ffffff, #f1f5f9);
+            color: #0f172a;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            margin-top: 10px;
+            box-shadow: 0 10px 20px -5px rgba(255, 255, 255, 0.2);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(255, 255, 255, 0.3);
+            background: #ffffff;
+        }
+
+        .login-btn:active {
+            transform: translateY(1px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message-box {
+            font-size: 13px;
+            margin-bottom: 20px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: none;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .success-box {
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .extra {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .extra a {
+            color: #60a5fa;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .extra a:hover {
+            color: #93c5fd;
+            text-decoration: underline;
+        }
+
+        /* Entrance animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-container {
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="login-container">
+        <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" class="logo-img" alt="Logo">
+        <h1>Welcome Back</h1>
+
+        <div class="role-switch">
+            <button class="role-btn active" id="studentBtn">Student</button>
+            <button class="role-btn" id="teacherBtn">Teacher</button>
+        </div>
+
+        <div id="studentLogin">
+            <form id="studentForm">
+                <div class="message-box" id="studentMessage"></div>
+
+                <label>Username</label>
+                <input type="text" id="studentUsername" placeholder="Enter your username" />
+
+                <label>Password</label>
+                <input type="password" id="studentPassword" minlength="6" placeholder="Enter your password" />
+
+                <button type="submit" class="login-btn">Login to Portal</button>
+            </form>
+        </div>
+
+        <div id="teacherLogin" style="display:none;">
+            <form id="teacherForm">
+                <div class="message-box" id="teacherMessage"></div>
+
+                <label>Username</label>
+                <input type="text" id="teacherUsername" placeholder="Enter your username" />
+
+                <label>Password</label>
+                <input type="password" id="teacherPassword" minlength="6" placeholder="Enter your password" />
+
+                <button type="submit" class="login-btn">Login to Portal</button>
+            </form>
+        </div>
+
+        <div class="extra">
+            Don’t have an account? <a href="SIGNUP.html">Create one</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "https://edulink-backend-o3hw.onrender.com/api/v1";
+
+        const studentBtn = document.getElementById('studentBtn');
+        const teacherBtn = document.getElementById('teacherBtn');
+        const studentDiv = document.getElementById('studentLogin');
+        const teacherDiv = document.getElementById('teacherLogin');
+
+        studentBtn.onclick = () => {
+            studentBtn.classList.add('active');
+            teacherBtn.classList.remove('active');
+            studentDiv.style.display = "block";
+            teacherDiv.style.display = "none";
+        };
+
+        teacherBtn.onclick = () => {
+            teacherBtn.classList.add('active');
+            studentBtn.classList.remove('active');
+            teacherDiv.style.display = "block";
+            studentDiv.style.display = "none";
+        };
+
+        function showMessage(id, type, text) {
+            const box = document.getElementById(id);
+            box.className = "message-box " + (type === "error" ? "error-box" : "success-box");
+            box.innerText = text;
+            box.style.display = "block";
+        }
+
+        function clearMessage(id) {
+            const box = document.getElementById(id);
+            box.style.display = "none";
+        }
+
+        async function handleLogin(formId, messageId, url, redirectPage) {
+            const form = document.getElementById(formId);
+            const button = form.querySelector(".login-btn");
+            const username = form.querySelector("input[type='text']");
+            const password = form.querySelector("input[type='password']");
+
+            clearMessage(messageId);
+            username.classList.remove("error");
+            password.classList.remove("error");
+
+            button.disabled = true;
+            button.innerText = "Authenticating...";
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        username: username.value.trim(),
+                        password: password.value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(messageId, "success", "Welcome back! Redirecting...");
+                    username.classList.add("success");
+                    password.classList.add("success");
+                    setTimeout(() => {
+                        form.reset();
+                        window.location.href = redirectPage;
+                    }, 1200);
+                } else {
+                    if (data.message === "Enter username") {
+                        showMessage(messageId, "error", "Username is required.");
+                        username.classList.add("error");
+                    }
+                    else if (data.message === "User does not exist") {
+                        showMessage(messageId, "error", "Account not found.");
+                        username.classList.add("error");
+                    }
+                    else if (data.message === "Password Incorrect") {
+                        showMessage(messageId, "error", "Incorrect password.");
+                        password.classList.add("error");
+                    }
+                    else {
+                        showMessage(messageId, "error", data.message || "Login failed.");
+                    }
+                }
+
+            } catch (err) {
+                showMessage(messageId, "error", "Network error. Please try again.");
+            }
+
+            button.disabled = false;
+            button.innerText = "Login to Portal";
+        }
+
+        document.getElementById("studentForm").onsubmit = function (e) {
+            e.preventDefault();
+            handleLogin("studentForm", "studentMessage", `${API_BASE}/login/student`, "./student/showclass.html");
+        };
+
+        document.getElementById("teacherForm").onsubmit = function (e) {
+            e.preventDefault();
+            handleLogin("teacherForm", "teacherMessage", `${API_BASE}/login/teacher`, "./teacher/tr.html");
+        };
+    </script>
+
+</body>
+
+</html>
