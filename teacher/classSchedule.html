@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduLink – Class Reschedule</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --secondary: #94a3b8;
+      --white: #ffffff;
+      --bg-transparent: transparent;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-color: #f8fafc;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: var(--bg-transparent);
+      color: var(--text-color);
+      height: 100vh;
+      overflow-y: auto;
+      padding-bottom: 40px;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .container {
+      padding: 30px 40px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--white);
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .day-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      padding: 20px 25px;
+      margin-bottom: 16px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .day-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .day-card strong {
+      font-size: 1.2rem;
+      color: #818cf8;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .day-card div {
+      font-size: 0.95rem;
+      color: var(--secondary);
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .day-card button {
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .day-card button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; backdrop-filter: blur(0px); }
+      to { opacity: 1; backdrop-filter: blur(8px); }
+    }
+
+    .modal-content {
+      background: #0f172a;
+      padding: 35px;
+      border-radius: 20px;
+      width: 400px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .modal-content h3 {
+      font-size: 1.4rem;
+      margin-bottom: 25px;
+      color: var(--white);
+      text-align: center;
+    }
+
+    .modal-content select, 
+    .modal-content input {
+      width: 100%;
+      margin-bottom: 20px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--white);
+      font-size: 1rem;
+      outline: none;
+    }
+    
+    .modal-content select option {
+        background: #0f172a;
+        color: white;
+    }
+    
+    .modal-content input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+
+    .modal-content select:focus, 
+    .modal-content input:focus {
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: white;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--white);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    #scheduleList {
+        display: flex;
+        flex-direction: column;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <h3>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      Class Reschedule
+    </h3>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <input type="text" id="search" placeholder="Search by day or topic outline..." />
+    </div>
+
+    <div id="scheduleList">
+        <div style="text-align: center; color: var(--secondary); padding: 40px;">Fetching schedule data...</div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>Edit Schedule Time</h3>
+
+      <select id="daySelect"></select>
+      <input type="time" id="timeInput" />
+      <input type="text" id="topicInput" placeholder="Enter lesson topic" />
+
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="saveSchedule()">Save Changes</button>
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Immediate Auth Check
+    (async function checkAuth() {
+      try {
+        const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          window.top.location.href = "../LOGIN.html";
+        }
+      } catch (error) {
+        window.top.location.href = "../LOGIN.html";
+      }
+    })();
+
+    // Intercept all fetch calls to handle 401 Unauthorized globally
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 401) {
+        window.top.location.href = "../LOGIN.html";
+      }
+      return response;
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const classId = params.get("classId");
+
+    const API = "https://edulink-backend-o3hw.onrender.com/api/v1/schedule";
+
+    const allDays = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+
+    let currentSchedule = [];
+
+    let editingIndex = null;
+
+    /* ================= FETCH FROM DATABASE ================= */
+
+    async function loadSchedule() {
+      try {
+        const res = await fetch(`${API}/${classId}`);
+        const data = await res.json();
+        currentSchedule = data.schedule || [];
+        render();
+      } catch(e) {
+        document.getElementById("scheduleList").innerHTML = `<div style="text-align: center; color: #ef4444; padding: 40px;">Failed to load schedule. Try again later.</div>`;
+      }
+    }
+
+    /* ================= RENDER ================= */
+
+    function render() {
+      const list = document.getElementById("scheduleList");
+      list.innerHTML = "";
+      
+      if(currentSchedule.length === 0){
+          list.innerHTML = `<div style="text-align: center; color: var(--secondary); padding: 40px;">No schedule defined for this class yet.</div>`;
+          return;
+      }
+
+      currentSchedule.forEach((cls, index) => {
+        const card = document.createElement("div");
+        card.className = "day-card";
+        
+        let formattedTime = cls.time;
+        // Optionally format 24h to 12h time here if desired
+
+        card.innerHTML = `
+          <div>
+            <strong>${cls.day}</strong>
+            <span style="color: #cbd5e1; font-weight: 500">${formattedTime}</span> &mdash; ${cls.topic || "No Topic Specified"}
+          </div>
+
+          <button onclick="openModal(${index})">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Reschedule
+          </button>
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function openModal(index) {
+      editingIndex = index;
+
+      modal.style.display = "flex";
+
+      const cls = currentSchedule[index];
+      daySelect.value = cls.day;
+      timeInput.value = cls.time;
+      topicInput.value = cls.topic;
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+    }
+
+    async function saveSchedule() {
+      const day = daySelect.value;
+      const time = timeInput.value;
+      const topic = topicInput.value;
+
+      if (!time || !topic) {
+        alert("Please fill all fields before saving.");
+        return;
+      }
+      
+      const modalContent = document.querySelector(".modal-content");
+      modalContent.style.opacity = "0.5";
+
+      try {
+        await fetch(`${API}/${classId}`, {
+            method: "PUT",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            index: editingIndex,
+            day,
+            time,
+            topic,
+            }),
+        });
+
+        closeModal();
+        loadSchedule();
+      } catch(e) {
+          alert("Error saving the schedule.");
+      } finally {
+          modalContent.style.opacity = "1";
+      }
+    }
+
+    document.getElementById("search").addEventListener("input", (e) => {
+      const value = e.target.value.toLowerCase();
+
+      document.querySelectorAll(".day-card").forEach((card) => {
+        card.style.display = card.innerText.toLowerCase().includes(value)
+          ? "flex"
+          : "none";
+      });
+    });
+
+    allDays.forEach((d) => {
+      const opt = document.createElement("option");
+      opt.value = d;
+      opt.textContent = d;
+      daySelect.appendChild(opt);
+    });
+
+    loadSchedule();
+  </script>
+</body>
+
+</html>

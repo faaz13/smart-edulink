@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edu Link - Marks Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --secondary: #94a3b8;
+      --white: #ffffff;
+      --bg-transparent: transparent;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-color: #f8fafc;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: var(--bg-transparent);
+      color: var(--text-color);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-info h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .header-info p {
+      font-size: 0.85rem;
+      color: var(--secondary);
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 240px;
+      background: rgba(255, 255, 255, 0.01);
+      padding: 20px 15px;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+
+    .sidebar button {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--secondary);
+      cursor: pointer;
+      font-weight: 500;
+      text-align: left;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar button::before {
+      content: '•';
+      color: var(--primary);
+    }
+
+    .sidebar button:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      transform: translateX(4px);
+    }
+
+    .sidebar button.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(59, 130, 246, 0.2));
+      border-color: rgba(99, 102, 241, 0.3);
+      color: var(--white);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transform: translateX(4px);
+    }
+
+    /* Main Content Area */
+    .main {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .top-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    input[type="text"] {
+      padding: 12px 15px 12px 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--white);
+      width: 280px;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+      outline: none;
+    }
+
+    .search-wrapper::before {
+      content: '🔍';
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      opacity: 0.5;
+    }
+
+    input[type="text"]:focus {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+
+    /* Table Styling */
+    .table-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--secondary);
+      font-weight: 600;
+      padding: 16px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      font-size: 0.95rem;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Buttons inside table */
+    .edit-btn,
+    .save-btn,
+    .cancel-btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .edit-btn {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .edit-btn:hover {
+      background: rgba(99, 102, 241, 0.25);
+    }
+
+    .save-btn {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      margin-right: 5px;
+    }
+    .save-btn:hover { background: rgba(16, 185, 129, 0.25); }
+
+    .cancel-btn {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .cancel-btn:hover { background: rgba(239, 68, 68, 0.25); }
+
+    /* Edit Input */
+    .marks input {
+      width: 70px;
+      padding: 6px;
+      text-align: center;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: 1px solid var(--primary);
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-info">
+      <h1>Class Marks & Assessment</h1>
+      <p>Manage grades and attendance performance</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="sidebar">
+      <button class="menu-btn active" onclick="loadCategory('mid1', this)">
+        Mid 1 Marks
+      </button>
+      <button class="menu-btn" onclick="loadCategory('mid2', this)">
+        Mid 2 Marks
+      </button>
+      <button class="menu-btn" onclick="loadCategory('teacherAssessment', this)">
+        Teacher Assessment
+      </button>
+      <button class="menu-btn" onclick="loadCategory('attendance', this)">
+        Attendance Marks
+      </button>
+      <button class="menu-btn" onclick="loadCategory('endsem', this)">
+        End Semester Marks
+      </button>
+      <button class="menu-btn" onclick="loadCategory('total', this)">
+        Total Overview
+      </button>
+    </div>
+
+    <div class="main">
+      <div class="top-controls">
+        <div class="search-wrapper">
+          <input type="text" id="searchInput" placeholder="Search by Roll number..." onkeyup="searchStudent()" />
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="marksTable">
+          <thead>
+            <tr>
+              <th>Roll No.</th>
+              <th>Max Marks</th>
+              <th>Marks Obtained</th>
+              <th>Percentage</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr><td colspan="5" style="padding: 40px; color: var(--secondary);">Loading student data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Immediate Auth Check
+    (async function checkAuth() {
+      try {
+        const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          window.top.location.href = "../LOGIN.html";
+        }
+      } catch (error) {
+        window.top.location.href = "../LOGIN.html";
+      }
+    })();
+
+    // Intercept all fetch calls to handle 401 Unauthorized globally
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 401) {
+        window.top.location.href = "../LOGIN.html";
+      }
+      return response;
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const classId = params.get("classId");
+
+    const API = "https://edulink-backend-o3hw.onrender.com/api/v1/marks";
+
+
+    let students = {};
+    let category = "mid1";
+
+    let maxMarks = {
+      mid1: 15,
+      mid2: 15,
+      teacherAssessment: 10,
+      attendance: 10,
+      endsem: 50,
+      total: 100,
+    };
+
+    /* ===== FETCH DATA FROM DB ===== */
+
+    async function loadStudents() {
+      try {
+        const res = await fetch(`${API}/${classId}`);
+        const data = await res.json();
+
+        students = {};
+
+        data.students.forEach((s) => {
+            students[s.studentRoll || s.studentRollNo || "Unknown"] = {
+            mid1: s.marks.mid1 || 0,
+            mid2: s.marks.mid2 || 0,
+            teacherAssessment: s.marks.teacherAssessment || 0,
+            endsem: s.marks.endsem || 0,
+            attendanceMarks: getAttendanceMarks(s),
+            attendance: s.attendance,
+            };
+        });
+
+        renderTable();
+      } catch(e) {
+          document.querySelector("#marksTable tbody").innerHTML = `<tr><td colspan="5" style="color: #ef4444; padding: 40px;">Failed to fetch marks data.</td></tr>`;
+      }
+    }
+
+    /* ===== ATTENDANCE MARKS ===== */
+
+    function getAttendanceMarks(student) {
+      if(!student.attendance) return 0;
+      let present = student.attendance.present || 0;
+      let total = student.attendance.total || 0;
+
+      if (total === 0) return 0;
+
+      let percent = (present / total) * 100;
+
+      if (percent > 90) return 10;
+      if (percent > 80) return 9;
+      if (percent > 75) return 8;
+
+      return 0;
+    }
+
+    /* ===== TOTAL ===== */
+
+    function calculateTotal(student) {
+      return (
+        student.mid1 +
+        student.mid2 +
+        student.teacherAssessment +
+        student.endsem +
+        student.attendanceMarks
+      );
+    }
+
+    /* ===== CATEGORY SWITCH ===== */
+
+    function loadCategory(cat, btn) {
+      category = cat;
+
+      document
+        .querySelectorAll(".menu-btn")
+        .forEach((b) => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      renderTable();
+    }
+
+    /* ===== RENDER TABLE ===== */
+
+    function renderTable() {
+      let tbody = document.querySelector("#marksTable tbody");
+      tbody.innerHTML = "";
+
+      const studentEntries = Object.entries(students);
+      if(studentEntries.length === 0){
+          tbody.innerHTML = `<tr><td colspan="5" style="padding: 40px; color: var(--secondary);">No students found in this class yet.</td></tr>`;
+          return;
+      }
+
+      studentEntries.forEach(([roll, student]) => {
+        let marks;
+
+        if (category === "attendance") {
+          marks = getAttendanceMarks({ attendance: student.attendance });
+        } else if (category === "total") {
+          marks = calculateTotal(student);
+        } else {
+          marks = student[category];
+        }
+
+        let total = marks;
+        let percentage = ((marks / maxMarks[category]) * 100).toFixed(1);
+
+        // Highlight bad marks
+        let colorClass = "";
+        if(category === "total" && marks < 40) {
+            colorClass = "color: #fca5a5;";
+        } else if (category !== "attendance" && category !== "total" && marks < (maxMarks[category] * 0.4)) {
+            colorClass = "color: #fca5a5;";
+        } else {
+            colorClass = "color: #6ee7b7; font-weight: 500;";
+        }
+
+        let row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td style="font-weight: 500; letter-spacing: 1px;">${roll}</td>
+            <td>${maxMarks[category]}</td>
+            <td class="marks" style="${colorClass} font-size: 1.1rem;">${marks}</td>
+            <td>${percentage}%</td>
+            <td>
+            ${category === "attendance" || category === "total"
+                        ? "<span style='color: var(--secondary); opacity: 0.5'>Read Only</span>"
+                        : `<button class="edit-btn" onclick="editRow(this,'${roll}')">✍️ Edit</button>`
+                    }
+            </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    /* ===== EDIT MARKS ===== */
+
+    function editRow(btn, roll) {
+      let row = btn.parentElement.parentElement;
+      let marksCell = row.querySelector(".marks");
+      let currentMarks = marksCell.innerText;
+
+      marksCell.innerHTML = `<input type="number" value="${currentMarks}" id="editInput" min="0" max="${maxMarks[category]}">`;
+
+      btn.style.display = "none";
+
+      let saveBtn = document.createElement("button");
+      saveBtn.innerText = "✓ Save";
+      saveBtn.className = "save-btn";
+
+      saveBtn.onclick = async function () {
+        let inputVal = document.getElementById("editInput").value;
+        if(inputVal === "" || inputVal < 0 || inputVal > maxMarks[category]){
+            alert(`Please enter a valid mark between 0 and ${maxMarks[category]}`);
+            return;
+        }
+
+        let newMarks = parseInt(inputVal);
+
+        students[roll][category] = newMarks;
+
+        // Visual feedback before reload
+        marksCell.innerHTML = "Saving...";
+
+        try {
+            await fetch(`${API}/${classId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    roll,
+                    category,
+                    marks: newMarks,
+                }),
+            });
+        } catch(e) {
+            console.error("Failed to update marks");
+        }
+
+        renderTable();
+      };
+
+      let cancelBtn = document.createElement("button");
+      cancelBtn.innerText = "✕";
+      cancelBtn.title = "Cancel";
+      cancelBtn.className = "cancel-btn";
+      cancelBtn.onclick = renderTable;
+
+      btn.parentElement.appendChild(saveBtn);
+      btn.parentElement.appendChild(cancelBtn);
+      
+      // Auto focus input
+      document.getElementById("editInput").focus();
+    }
+
+    /* ===== SEARCH ===== */
+
+    function searchStudent() {
+      let filter = document.getElementById("searchInput").value.toLowerCase();
+
+      document.querySelectorAll("#marksTable tbody tr").forEach((row) => {
+          if(!row.cells[0]) return; // Handle loading/empty rows
+          
+        row.style.display = row.cells[0].innerText
+          .toLowerCase()
+          .includes(filter)
+          ? ""
+          : "none";
+      });
+    }
+
+
+
+    /* ===== INIT ===== */
+
+    loadStudents();
+  </script>
+</body>
+
+</html>
