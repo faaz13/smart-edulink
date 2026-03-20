@@ -467,53 +467,52 @@
             sendCombinedAttendance();
         }
 
-        function getMaxMarkedDay(monthObj) {
-            let maxDay = 0;
+        function getCombinedAttendance() {
+    let result = {};
 
-            for (let roll in monthObj.students) {
-                let days = monthObj.students[roll].days || [];
-                if (days.length > 0) {
-                    maxDay = Math.max(maxDay, Math.max(...days));
+    for (let monthKey in attendanceData) {
+        let monthObj = attendanceData[monthKey];
+
+        // 🔹 Step 1: Find max day from ANY student
+        let maxDay = 0;
+
+        for (let roll in monthObj.students) {
+            let days = monthObj.students[roll].days || [];
+            if (days.length > 0) {
+                let studentMax = Math.max(...days);
+                if (studentMax > maxDay) {
+                    maxDay = studentMax;
                 }
             }
-
-            return maxDay;
         }
-        function getCombinedAttendance() {
-            let result = {};
 
-            for (let monthKey in attendanceData) {
-                let monthObj = attendanceData[monthKey];
+        // अगर किसी ने attendance mark ही नहीं की
+        if (maxDay === 0) continue;
 
-                let maxDay = getMaxMarkedDay(monthObj);
+        // 🔹 Step 2: Count holidays till maxDay
+        let holidaysTillMax = (monthObj.holidays || [])
+            .filter(d => d <= maxDay).length;
 
-        
-                if (maxDay === 0) continue;
+        let totalClasses = maxDay - holidaysTillMax;
 
-        
-                let holidaysTillMax = (monthObj.holidays || [])
-                    .filter(d => d <= maxDay).length;
-
-                let totalWorkingDays = maxDay - holidaysTillMax;
-
-        
-                students.forEach(roll => {
-                    if (!result[roll]) {
-                        result[roll] = { daysPresent: 0, total_days: 0 };
-                    }
-
-                    let studentData = monthObj.students[roll];
-
-                    if (studentData) {
-                        result[roll].daysPresent += studentData.total;
-                    }
-
-                    result[roll].total_days += totalWorkingDays;
-                });
+        // 🔹 Step 3: For each student
+        students.forEach(roll => {
+            if (!result[roll]) {
+                result[roll] = { daysPresent: 0, total_days: 0 };
             }
 
-            return result;
-        }
+            let studentData = monthObj.students[roll];
+
+            // attended = size of days array
+            let attended = studentData?.days?.length || 0;
+
+            result[roll].daysPresent += attended;
+            result[roll].total_days += totalClasses;
+        });
+    }
+
+    return result;
+}
         async function sendCombinedAttendance() {
             let combinedAttendance = getCombinedAttendance();
             await fetch(`${API_BASE}/update-attendance`, {
