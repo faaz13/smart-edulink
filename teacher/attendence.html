@@ -467,20 +467,43 @@
             sendCombinedAttendance();
         }
 
-        function getCombinedAttendance() {
-            let result = {};
-            for (let monthKey in attendanceData) {
-                let monthObj = attendanceData[monthKey];
-                let parts = monthKey.split("-");
-                let year = parts[0], month = parts[1];
-                let totalDays = new Date(year, parseInt(month) + 1, 0).getDate();
-                let workingDays = totalDays - (monthObj.holidays?.length || 0);
-                for (let roll in monthObj.students) {
-                    if (!result[roll]) result[roll] = { daysPresent: 0, total_days: 0 };
-                    result[roll].daysPresent += monthObj.students[roll].total;
-                    result[roll].total_days += workingDays;
+        function getLastMarkedDay(monthObj) {
+            let lastDay = 0;
+
+            for (let roll in monthObj.students) {
+                let days = monthObj.students[roll].days || [];
+                if (days.length > 0) {
+                    let maxDay = Math.max(...days);
+                    lastDay = Math.max(lastDay, maxDay);
                 }
             }
+
+            return lastDay;
+        }
+        function getCombinedAttendance() {
+            let result = {};
+        
+            for (let monthKey in attendanceData) {
+                let monthObj = attendanceData[monthKey];
+                let lastDay = getLastMarkedDay(monthObj);
+                if (lastDay === 0) continue;
+                let holidaysTillLastDay = (monthObj.holidays || []).filter(d => d <= lastDay).length;
+                let workingDays = lastDay - holidaysTillLastDay;
+                students.forEach(roll => {
+                    if (!result[roll]) {
+                        result[roll] = { daysPresent: 0, total_days: 0 };
+                    }
+
+                    let studentData = monthObj.students[roll];
+
+                    if (studentData) {
+                        result[roll].daysPresent += studentData.total;
+                    }
+
+                    result[roll].total_days += workingDays;
+                });
+            }
+
             return result;
         }
 
