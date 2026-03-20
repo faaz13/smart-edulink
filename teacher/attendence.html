@@ -467,46 +467,7 @@
             sendCombinedAttendance();
         }
 
-        function getLastMarkedDay(monthObj) {
-            let lastDay = 0;
-
-            for (let roll in monthObj.students) {
-                let days = monthObj.students[roll].days || [];
-                if (days.length > 0) {
-                    let maxDay = Math.max(...days);
-                    lastDay = Math.max(lastDay, maxDay);
-                }
-            }
-
-            return lastDay;
-        }
-        function getCombinedAttendance() {
-            let result = {};
-        
-            for (let monthKey in attendanceData) {
-                let monthObj = attendanceData[monthKey];
-                let lastDay = getLastMarkedDay(monthObj);
-                if (lastDay === 0) continue;
-                let holidaysTillLastDay = (monthObj.holidays || []).filter(d => d <= lastDay).length;
-                let workingDays = lastDay - holidaysTillLastDay;
-                students.forEach(roll => {
-                    if (!result[roll]) {
-                        result[roll] = { daysPresent: 0, total_days: 0 };
-                    }
-
-                    let studentData = monthObj.students[roll];
-
-                    if (studentData) {
-                        result[roll].daysPresent += studentData.total;
-                    }
-
-                    result[roll].total_days += workingDays;
-                });
-            }
-
-            return result;
-        }
-
+        attendanceData_69b3fadd7f630a8d7d61caba
         async function sendCombinedAttendance() {
             let combinedAttendance = getCombinedAttendance();
             await fetch(`${API_BASE}/update-attendance`, {
