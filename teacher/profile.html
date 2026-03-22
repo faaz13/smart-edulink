@@ -669,10 +669,17 @@
                 
                 const data = await res.json();
                 if (data.success && data.user) {
-                    const nameParts = (data.user.fullname || data.user.username || "Unknown User").split(" ");
+                    const fullName = data.user.fullname || data.user.username || "";
+                    const nameParts = fullName.split(" ");
+                    
                     document.getElementById('firstName').value = nameParts[0] || "";
                     document.getElementById('lastName').value = nameParts.slice(1).join(" ") || "";
                     document.getElementById('email').value = data.user.email || "";
+                    document.getElementById('phone').value = data.user.mobilenumber || "";
+                    
+                    if (data.user.department) {
+                        document.getElementById('bio').value = `Faculty at ${data.user.department} Department`;
+                    }
                     
                     updateDisplays();
                 }
