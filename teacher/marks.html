@@ -7,6 +7,13 @@
   <title>Edu Link - Marks Report</title>
 
   <style>
+    :root {
+      --primary: #6366f1;
+      --bg-light: #0f172a;
+      --text-color: #f8fafc;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -15,60 +22,28 @@
     }
 
     body {
-      background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
-      background-size: 200% 200%;
-      min-height: 100vh;
-      color: #f8fafc;
-      overflow-x: hidden;
+      background: transparent;
+      color: var(--text-color);
     }
 
     header {
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      color: #f8fafc;
       padding: 20px;
       text-align: center;
-      position: relative;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      z-index: 10;
+      border-bottom: 1px solid var(--border-color);
     }
 
     header h1 {
-      font-size: 26px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #ffffff, #94a3b8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 24px;
+      color: var(--text-color);
     }
 
     header p {
       font-size: 14px;
       color: #94a3b8;
-      margin-top: 6px;
-      font-weight: 400;
     }
 
     .logout-btn {
-      position: absolute;
-      right: 25px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255, 255, 255, 0.05);
-      color: #e2e8f0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 18px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-    
-    .logout-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      display: none;
     }
 
     .container {
@@ -77,199 +52,91 @@
     }
 
     .sidebar {
-      width: 250px;
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      padding: 30px 20px;
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      width: 220px;
+      padding: 20px;
+      border-right: 1px solid var(--border-color);
     }
 
     .sidebar button {
       width: 100%;
-      padding: 14px 18px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.03);
-      color: #cbd5e1;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
       cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      text-align: left;
     }
 
-    .sidebar button:hover {
-      background: rgba(255, 255, 255, 0.06);
-      transform: translateX(4px);
-      color: #f8fafc;
-    }
-
+    .sidebar button:hover,
     .sidebar button.active {
-      background: linear-gradient(135deg, #6366f1, #3b82f6);
-      color: #ffffff;
-      border-color: #4f46e5;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-      transform: translateX(4px);
+      background: var(--primary);
+      color: white;
     }
 
     .main {
       flex: 1;
-      padding: 35px;
-      overflow-y: auto;
+      padding: 20px;
     }
 
     .top-controls {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-      gap: 15px;
+      margin-bottom: 20px;
     }
 
     input[type="text"], input[type="number"] {
-      padding: 12px 18px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      width: 280px;
-      background: rgba(255, 255, 255, 0.04);
-      color: #f8fafc;
+      padding: 7px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
       outline: none;
-      font-size: 14px;
-      transition: all 0.3s;
-    }
-    
-    input[type="text"]:focus, input[type="number"]:focus {
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-      background: rgba(255, 255, 255, 0.06);
-    }
-    
-    input[type="text"]::placeholder {
-      color: #64748b;
     }
 
     input[type="number"] {
-      width: 100px;
+      width: 80px;
     }
 
     .sort-btn {
-      padding: 12px 24px;
-      border: none;
-      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      padding: 7px 10px;
+      background: var(--primary);
       color: white;
-      border-radius: 12px;
+      border: none;
       cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-    }
-    
-    .sort-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+      border-radius: 5px;
     }
 
     table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-collapse: collapse;
+      min-width: 100%;
     }
 
-    th,
-    td {
-      padding: 18px;
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 6px;
       text-align: center;
-      font-size: 15px;
     }
 
     th {
-      background: rgba(255, 255, 255, 0.04);
-      color: #f8fafc;
-      font-weight: 600;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      text-transform: uppercase;
-      font-size: 13px;
-      letter-spacing: 0.5px;
+      background: rgba(99,102,241,0.2);
+      color: var(--text-color);
     }
 
-    td {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      color: #e2e8f0;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.015);
-    }
-
-    tr:hover {
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    .edit-btn,
-    .save-btn,
-    .cancel-btn {
-      padding: 10px 16px;
+    .edit-btn, .save-btn, .cancel-btn {
+      padding: 5px 10px;
       border: none;
-      border-radius: 10px;
       cursor: pointer;
-      font-weight: 600;
-      font-size: 13px;
-      margin: 0 4px;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 5px;
+      margin: 0 2px;
     }
 
-    .edit-btn {
-      background: rgba(99, 102, 241, 0.15);
-      color: #818cf8;
-      border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-    
-    .edit-btn:hover {
-      background: rgba(99, 102, 241, 0.25);
-      color: #a5b4fc;
-    }
-
-    .save-btn {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    
-    .save-btn:hover {
-      background: rgba(16, 185, 129, 0.25);
-    }
-
-    .cancel-btn {
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-    
-    .cancel-btn:hover {
-      background: rgba(239, 68, 68, 0.25);
-    }
+    .edit-btn { background: var(--primary); color: white; }
+    .save-btn { background: #10B981; color: white; }
+    .cancel-btn { background: #EF4444; color: white; }
 
     .highlight {
-      background: rgba(16, 185, 129, 0.15) !important;
-      font-weight: 700;
-      color: #10b981;
+      background: rgba(16, 185, 129, 0.2) !important;
+      font-weight: bold;
     }
   </style>
 </head>
