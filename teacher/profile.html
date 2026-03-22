@@ -653,6 +653,33 @@
             showToast('Password updated successfully!');
             document.getElementById('security-form').reset();
         }
+
+        // Fetch User Data from Login
+        (async function loadUserData() {
+            try {
+                const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
+                    method: "POST",
+                    credentials: "include"
+                });
+                
+                if (!res.ok) {
+                    window.location.href = "../login.html";
+                    return;
+                }
+                
+                const data = await res.json();
+                if (data.success && data.user) {
+                    const nameParts = (data.user.fullname || data.user.username || "Unknown User").split(" ");
+                    document.getElementById('firstName').value = nameParts[0] || "";
+                    document.getElementById('lastName').value = nameParts.slice(1).join(" ") || "";
+                    document.getElementById('email').value = data.user.email || "";
+                    
+                    updateDisplays();
+                }
+            } catch (error) {
+                window.location.href = "../login.html";
+            }
+        })();
     </script>
 </body>
 
