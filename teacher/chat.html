@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduLink Chat</title>
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: transparent;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --text-color: #f8fafc;
+      --muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-color);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--text-color);
+      padding: 16px 20px;
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      justify-content: space-between;
+    }
+
+    .user-info {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Message Row */
+    .msg-row {
+      display: flex;
+      width: 100%;
+    }
+
+    .msg-left {
+      justify-content: flex-start;
+    }
+
+    .msg-right {
+      justify-content: flex-end;
+    }
+
+    .msg-bubble {
+      max-width: 80%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      line-height: 1.4;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* Other users */
+    .msg-left .msg-bubble {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-color);
+    }
+
+    /* Logged user */
+    .msg-right .msg-bubble {
+      background: var(--primary);
+      color: #fff;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .msg-meta {
+      font-size: 11px;
+      margin-bottom: 4px;
+      opacity: 0.8;
+      color: var(--muted);
+    }
+    
+    .msg-right .msg-meta {
+      color: #e0e7ff;
+    }
+
+    /* Input */
+    .chat-input {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 15px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 25px;
+      border: 1px solid var(--border);
+      outline: none;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+    }
+    
+    .chat-input input::placeholder {
+      color: var(--muted);
+    }
+
+    .chat-input button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .chat-input button:hover {
+      background: var(--primary-dark);
+    }
+
+    .poll-form {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .poll-form input {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-color);
+    }
+    .poll-form input::placeholder {
+      color: var(--muted);
+    }
+    .poll-form button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .poll-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 16px;
+      margin-top: 8px;
+      min-width: 260px;
+      color: var(--text-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .poll-question {
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-color);
+    }
+    .poll-option-container {
+      position: relative;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .poll-option-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: rgba(99, 102, 241, 0.2);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+    }
+    .poll-option-content {
+      position: relative;
+      z-index: 2;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+    .poll-option-container:hover {
+      border-color: rgba(99, 102, 241, 0.5);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .poll-option-container.voted {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+    }
+    .poll-option-container.voted .poll-option-bar {
+      background: rgba(99, 102, 241, 0.3);
+    }
+    .poll-option-container.voted .poll-option-content {
+      color: #818cf8;
+      font-weight: 600;
+    }
+    .poll-check {
+      margin-left: 8px;
+      color: #818cf8;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .error-box {
+      text-align: center;
+      padding: 20px;
+      color: #fca5a5;
+      font-weight: 500;
+    }
+    
+    /* Custom scrollbar for chat */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div>💬 Class Chat</div>
+    <div id="userInfo" class="user-info">Loading...</div>
+  </div>
+
+  <div id="chatContainer" class="chat-container"></div>
+
+  <div id="pollForm" class="poll-form">
+    <input id="pollQuestion" type="text" placeholder="Ask a question...">
+    <div id="pollOptionsContainer" style="display: flex; flex-direction: column; gap: 5px;">
+      <input class="poll-option-input" type="text" placeholder="Option 1">
+      <input class="poll-option-input" type="text" placeholder="Option 2">
+    </div>
+    <div style="display:flex; gap: 10px; margin-top: 5px;">
+      <button style="flex:1; background: var(--muted);" onclick="addPollOption()">+ Option</button>
+      <button style="flex:1;" onclick="sendPoll()">Send Poll</button>
+      <button style="flex:1; background: #ef4444;" onclick="togglePollForm()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <button onclick="togglePollForm()" style="background: var(--muted);">📊</button>
+    <input id="msgInput" type="text" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    // Immediate Auth Check
+    (async function checkAuth() {
+      try {
+        const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          window.top.location.href = "../login.html";
+        }
+      } catch (error) {
+        window.top.location.href = "../login.html";
+      }
+    })();
+
+    // Intercept all fetch calls to handle 401 Unauthorized globally
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 401) {
+        window.top.location.href = "../login.html"; // Use window.top because it's in an iframe
+      }
+      return response;
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const classId = params.get("classId");
+
+    const API_BASE = "https://edulink-backend-o3hw.onrender.com/api/v1";
+
+    let loginUser = null;
+    let messages = [];
+
+    /* LOAD USER */
+    async function loadCurrentUser() {
+      const res = await fetch(`${API_BASE}/currentUser`, {
+        method: "POST",
+        credentials: "include"
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        window.top.location.href = "../login.html";
+        return;
+      }
+
+      loginUser = {
+        id: data.user._id,
+        name: data.user.username
+      };
+
+      document.getElementById("userInfo").innerText = loginUser.name;
+
+      fetchMessages();
+    }
+
+    /* FETCH ALL MESSAGES */
+    async function fetchMessages() {
+      const res = await fetch(`${API_BASE}/chat/messages/${classId}`, {
+        credentials: "include"
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        messages = data.messages;
+        renderMessages();
+      }
+    }
+
+    /* SEND MESSAGE */
+    async function sendMessage() {
+      const input = document.getElementById("msgInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      await fetch(`${API_BASE}/chat/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ text, classId })
+      });
+
+      input.value = "";
+      fetchMessages();
+    }
+
+    /* RENDER CHAT */
+    function renderMessages() {
+      const container = document.getElementById("chatContainer");
+      container.innerHTML = "";
+
+      messages.forEach(msg => {
+        const isMe = msg.senderId === loginUser.id;
+
+        const row = document.createElement("div");
+        row.className = "msg-row " + (isMe ? "msg-right" : "msg-left");
+
+        const bubble = document.createElement("div");
+        bubble.className = "msg-bubble";
+
+        const meta = document.createElement("div");
+        meta.className = "msg-meta";
+        meta.innerText =
+          msg.name + " • " + formatDateTime(msg.createdAt);
+
+        const textDiv = document.createElement("div");
+        
+        if (msg.isPoll) {
+          textDiv.className = "poll-card";
+          let totalVotes = msg.pollOptions.reduce((acc, opt) => acc + opt.votes.length, 0);
+          
+          let pollHtml = `<div class="poll-question">📊 ${msg.pollQuestion}</div>`;
+          msg.pollOptions.forEach((opt, index) => {
+            let hasVoted = opt.votes.includes(loginUser.id);
+            let percent = totalVotes === 0 ? 0 : Math.round((opt.votes.length / totalVotes) * 100);
+            
+            pollHtml += `
+              <div class="poll-option-container ${hasVoted ? 'voted' : ''}" onclick="votePoll('${msg._id}', ${index})">
+                <div class="poll-option-bar" style="width: ${percent}%"></div>
+                <div class="poll-option-content">
+                  <span>${opt.optionText} ${hasVoted ? '<span class="poll-check">✓</span>' : ''}</span>
+                  <span style="opacity: 0.8">${percent}% (${opt.votes.length})</span>
+                </div>
+              </div>
+            `;
+          });
+          textDiv.innerHTML = pollHtml;
+        } else {
+          textDiv.innerText = msg.text;
+        }
+
+        bubble.appendChild(meta);
+        bubble.appendChild(textDiv);
+        row.appendChild(bubble);
+        container.appendChild(row);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function formatDateTime(date) {
+      return new Date(date).toLocaleString([], {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function togglePollForm() {
+      const form = document.getElementById("pollForm");
+      form.style.display = form.style.display === "flex" ? "none" : "flex";
+    }
+
+    function addPollOption() {
+      const container = document.getElementById("pollOptionsContainer");
+      if (container.children.length >= 6) {
+        alert("Maximum 6 options allowed");
+        return;
+      }
+      const input = document.createElement("input");
+      input.className = "poll-option-input";
+      input.type = "text";
+      input.placeholder = "Option " + (container.children.length + 1);
+      container.appendChild(input);
+    }
+
+    async function sendPoll() {
+      const question = document.getElementById("pollQuestion").value.trim();
+      const optionInputs = document.querySelectorAll(".poll-option-input");
+      const options = Array.from(optionInputs).map(inp => inp.value.trim()).filter(v => v);
+
+      if (!question) return alert("Please enter a question");
+      if (options.length < 2) return alert("Please enter at least 2 options");
+
+      await fetch(`${API_BASE}/chat/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ isPoll: true, pollQuestion: question, pollOptions: options, classId })
+      });
+
+      document.getElementById("pollQuestion").value = "";
+      optionInputs.forEach((inp, idx) => { if(idx > 1) inp.remove(); else inp.value = ""; });
+      togglePollForm();
+      fetchMessages();
+    }
+
+    async function votePoll(messageId, optionIndex) {
+      await fetch(`${API_BASE}/chat/votePoll`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ messageId, optionIndex })
+      });
+      fetchMessages();
+    }
+
+    loadCurrentUser();
+  </script>
+</body>
+
+</html>

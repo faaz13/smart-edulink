@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduLink – Class Reschedule</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family:
+        Segoe UI,
+        sans-serif;
+      background: transparent;
+      color: #f8fafc;
+    }
+
+    header {
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    header h3 {
+        color: #f8fafc;
+        margin: 0;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .day-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+    }
+
+    button {
+      padding: 7px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: rgba(99, 102, 241, 0.2);
+      color: #f8fafc;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+        background: rgba(99, 102, 241, 0.4);
+    }
+
+    .reset {
+      background: #6366f1;
+      color: white;
+    }
+
+    input[type="text"], input[type="time"], select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: #f8fafc;
+      outline: none;
+    }
+    
+    input[type="text"]::placeholder {
+        color: #94a3b8;
+    }
+    
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+    
+    option {
+        background: #0f172a;
+        color: #f8fafc;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal-content {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 16px;
+      width: 350px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #f8fafc;
+    }
+
+    .modal-content input,
+    .modal-content select {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+    }
+    
+    .modal-content button {
+        margin-top: 5px;
+        margin-right: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <!-- <h2>EduLink</h2> -->
+    <h3>Class Reschedule</h3>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <input type="text" id="search" placeholder="Search day or topic..." />
+    </div>
+
+    <div id="scheduleList"></div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>Edit Class</h3>
+
+      <select id="daySelect"></select>
+      <input type="time" id="timeInput" />
+      <input type="text" id="topicInput" placeholder="Topic" />
+
+      <button onclick="saveSchedule()">Save</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    // Immediate Auth Check
+    (async function checkAuth() {
+      try {
+        const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          window.top.location.href = "../login.html";
+        }
+      } catch (error) {
+        window.top.location.href = "../login.html";
+      }
+    })();
+
+    // Intercept all fetch calls to handle 401 Unauthorized globally
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 401) {
+        window.top.location.href = "../login.html";
+      }
+      return response;
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const classId = params.get("classId");
+
+    const API = "https://edulink-backend-o3hw.onrender.com/api/v1/schedule";
+
+    const allDays = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+
+    let currentSchedule = [];
+
+    let editingIndex = null;
+
+    /* ================= FETCH FROM DATABASE ================= */
+
+    async function loadSchedule() {
+      const res = await fetch(`${API}/${classId}`);
+
+      const data = await res.json();
+
+      currentSchedule = data.schedule;
+
+      render();
+    }
+
+    /* ================= RENDER ================= */
+
+    function render() {
+      const list = document.getElementById("scheduleList");
+
+      list.innerHTML = "";
+
+      currentSchedule.forEach((cls, index) => {
+        const card = document.createElement("div");
+
+        card.className = "day-card";
+
+        card.innerHTML = `
+<div>
+<strong>${cls.day}</strong><br>
+${cls.time} — ${cls.topic}
+</div>
+
+<button onclick="openModal(${index})">
+Reschedule
+</button>
+`;
+
+        list.appendChild(card);
+      });
+    }
+
+    function openModal(index) {
+      editingIndex = index;
+
+      modal.style.display = "flex";
+
+      const cls = currentSchedule[index];
+
+      daySelect.value = cls.day;
+
+      timeInput.value = cls.time;
+
+      topicInput.value = cls.topic;
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+    }
+    async function saveSchedule() {
+      const day = daySelect.value;
+
+      const time = timeInput.value;
+
+      const topic = topicInput.value;
+
+      if (!time || !topic) {
+        alert("Fill all fields");
+        return;
+      }
+
+      await fetch(`${API}/${classId}`, {
+        method: "PUT",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          index: editingIndex,
+          day,
+          time,
+          topic,
+        }),
+      });
+
+      closeModal();
+
+      loadSchedule();
+    }
+
+    document.getElementById("search").addEventListener("input", (e) => {
+      const value = e.target.value.toLowerCase();
+
+      document.querySelectorAll(".day-card").forEach((card) => {
+        card.style.display = card.innerText.toLowerCase().includes(value)
+          ? ""
+          : "none";
+      });
+    });
+    allDays.forEach((d) => {
+      const opt = document.createElement("option");
+
+      opt.value = d;
+
+      opt.textContent = d;
+
+      daySelect.appendChild(opt);
+    });
+
+    loadSchedule();
+  </script>
+</body>
+
+</html>

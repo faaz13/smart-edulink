@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Dashboard – EduLink</title>
+
+  <style>
+    /* GLOBAL */
+
+    :root {
+      --primary: #6366f1;
+      --bg-light: #0f172a;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-color: #f8fafc;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
+      background-size: 200% 200%;
+      color: var(--text-color);
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 220px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid var(--border-color);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+    }
+
+    .logo h2 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    /* MAIN */
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOPBAR */
+
+    .topbar {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* RECTANGULAR CREATE BUTTON */
+
+    .create-btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .create-btn:hover {
+      background: #4f46e5;
+    }
+
+    /* ICONS */
+
+    .icons {
+      display: flex;
+      gap: 20px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    /* CONTENT */
+
+    .content {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    /* CLASS GRID */
+
+    #classList {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 30px;
+    }
+
+    /* CLASS CARD */
+
+    .class-box {
+      padding: 22px;
+      border-radius: 14px;
+      background: var(--card-bg);
+      cursor: pointer;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      transition: 0.25s;
+      border: 1px solid var(--border-color);
+    }
+
+    .class-box:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .class-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-color);
+    }
+
+    .class-code {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+
+    /* PAGE TITLE */
+
+    .page-title {
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- SIDEBAR -->
+
+  <div class="sidebar">
+    <div class="logo">
+      <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" />
+      <h2>EduLink</h2>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+
+  <div class="main">
+    <div class="topbar">
+      <button class="create-btn" onclick="openCreate()">Create Class</button>
+
+      <div class="icons">
+        <span>❓</span>
+        <span onclick="logout()" style="cursor: pointer;">👤 Logout</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-title">Your Classes</div>
+      <div class="subtitle">Click a class to open the classroom</div>
+
+      <div id="classList"></div>
+    </div>
+  </div>
+
+  <script>
+    // Immediate Auth Check
+    (async function checkAuth() {
+      try {
+        const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          window.location.href = "../login.html";
+        }
+      } catch (error) {
+        window.location.href = "../login.html";
+      }
+    })();
+
+    // Intercept all fetch calls to handle 401 Unauthorized globally
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 401) {
+        window.location.href = "../login.html";
+      }
+      return response;
+    };
+
+    async function logout() {
+      try {
+        await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/logout/teacher", {
+          method: "POST",
+          credentials: "include",
+        });
+      } catch (error) {
+        console.log("Logout failed");
+      }
+      window.location.href = "../login.html";
+    }
+
+    function openCreate() {
+      window.location.href = "createClass.html";
+    }
+
+    /* Load classes from backend */
+
+    async function loadClasses() {
+      try {
+        const res = await fetch(
+          "https://edulink-backend-o3hw.onrender.com/api/v1/teacher/classes",
+          {
+            method: "GET",
+            credentials: "include",
+          },
+        );
+
+        const data = await res.json();
+
+        let classList = document.getElementById("classList");
+        classList.innerHTML = "";
+
+        data.classes.forEach((cls) => {
+          let div = document.createElement("div");
+
+          div.className = "class-box";
+
+          div.onclick = function () {
+            openClass(cls._id);
+          };
+
+          div.innerHTML = `
+<div class="class-name">${cls.name}</div>
+<div class="class-code">Total Students ${cls.students.length}</div>
+`;
+
+          classList.appendChild(div);
+        });
+      } catch (err) {
+        console.log("Error loading classes", err);
+      }
+    }
+
+    /* Open classroom */
+
+    function openClass(classId) {
+      window.location.href = "./classroom_main.html?classId=" + classId;
+    }
+
+    loadClasses();
+  </script>
+</body>
+
+</html>

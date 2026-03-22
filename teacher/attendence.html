@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg-light: #0f172a;
+            --text-color: #f8fafc;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            color: var(--text-color);
+            background: transparent;
+        }
+
+        .container {
+            height: 100%;
+            padding: 20px;
+        }
+
+        h2 {
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            margin-bottom: 15px;
+        }
+
+        select,
+        button {
+            padding: 7px 10px;
+            margin-right: 10px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        option {
+            background: var(--bg-light);
+            color: var(--text-color);
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            min-width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background: rgba(99,102,241,0.2);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        th.date:hover {
+            background: rgba(99,102,241,0.4);
+        }
+
+        th.holiday {
+            background: rgba(239, 68, 68, 0.4) !important;
+            color: white;
+            font-weight: bold;
+        }
+
+        .total {
+            font-weight: bold;
+            background: rgba(255,255,255,0.05);
+        }
+
+        #load {
+            border-radius: 5px;
+            background: var(--primary);
+            border: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        #load:hover {
+            cursor: pointer;
+            background-color: #4f46e5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Student Attendance</h2>
+        <div class="controls">
+            Month: <select id="month"></select>
+            Year: <select id="year"></select>
+            <button id="load">Load Attendance</button>
+        </div>
+        <div class="table-wrapper">
+            <div id="attendanceTable"></div>
+        </div>
+    </div>
+
+    <script>
+        // Immediate Auth Check
+        (async function checkAuth() {
+            try {
+                const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
+                    method: "POST",
+                    credentials: "include",
+                });
+                if (!res.ok) {
+                    window.top.location.href = "../login.html";
+                }
+            } catch (error) {
+                window.top.location.href = "../login.html";
+            }
+        })();
+
+        // Intercept all fetch calls to handle 401 Unauthorized globally
+        const originalFetch = window.fetch;
+        window.fetch = async (...args) => {
+            const response = await originalFetch(...args);
+            if (response.status === 401) {
+                window.top.location.href = "../login.html";
+            }
+            return response;
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const classId = params.get("classId");
+        const storageKey = "attendanceData_" + classId;
+        const API_BASE = "https://edulink-backend-o3hw.onrender.com/api/v1/attendence";
+
+        let attendanceData = JSON.parse(localStorage.getItem(storageKey)) || {};
+        let holidays = new Set();
+        const students = [];
+
+        const monthSelect = document.getElementById("month");
+        const yearSelect = document.getElementById("year");
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        let classDuration = null;
+
+        function updateMonthDropdown(selectedYear) {
+            monthSelect.innerHTML = '';
+            let startM = 0;
+            let endM = 11;
+
+            if (classDuration) {
+                const { fromYear, fromMonth, toYear, toMonth } = classDuration;
+                if (parseInt(selectedYear) === fromYear) startM = fromMonth;
+                if (parseInt(selectedYear) === toYear) endM = toMonth;
+            }
+            
+            for (let m = startM; m <= endM; m++) {
+                let o = document.createElement("option");
+                o.value = m;
+                o.text = months[m];
+                monthSelect.appendChild(o);
+            }
+        }
+
+        function initDropdowns(duration) {
+            classDuration = null;
+            if (duration && duration.from && duration.to) {
+                const [fYear, fMonth] = duration.from.split('-');
+                const [tYear, tMonth] = duration.to.split('-');
+                classDuration = {
+                    fromYear: parseInt(fYear),
+                    fromMonth: parseInt(fMonth) - 1,
+                    toYear: parseInt(tYear),
+                    toMonth: parseInt(tMonth) - 1
+                };
+            }
+
+            yearSelect.innerHTML = '';
+            if (classDuration) {
+                for (let y = classDuration.fromYear; y <= classDuration.toYear; y++) {
+                    let o = document.createElement("option"); o.value = y; o.text = y;
+                    yearSelect.appendChild(o);
+                }
+            } else {
+                let currentYear = new Date().getFullYear();
+                for (let y = currentYear - 2; y <= currentYear + 2; y++) {
+                    let o = document.createElement("option"); o.value = y; o.text = y;
+                    yearSelect.appendChild(o);
+                }
+            }
+            
+            updateMonthDropdown(yearSelect.value);
+            monthSelect.value = classDuration ? classDuration.fromMonth : new Date().getMonth();
+        }
+
+        function getKey() {
+            return yearSelect.value + "-" + monthSelect.value;
+        }
+
+        function generateTable() {
+            let key = getKey();
+            let saved = attendanceData[key];
+            holidays = new Set(saved?.holidays || []);
+            let month = parseInt(monthSelect.value);
+            let year = parseInt(yearSelect.value);
+            let days = new Date(year, month + 1, 0).getDate();
+            let html = "<table><tr><th>Roll No</th>";
+            for (let d = 1; d <= days; d++) {
+                let isHoliday = holidays.has(d);
+                html += `<th class="date ${isHoliday ? 'holiday' : ''}" onclick="toggleHoliday(${d})">${isHoliday ? 'Holiday' : d}</th>`;
+            }
+            html += "<th>Total</th></tr>";
+            students.forEach((roll, row) => {
+                html += `<tr><td>${roll}</td>`;
+                for (let d = 1; d <= days; d++) {
+                    let checked = saved?.students?.[roll]?.days?.includes(d);
+                    let disabled = holidays.has(d);
+                    html += `<td><input type="checkbox" class="r${row}" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="updateTotal(${row})"></td>`;
+                }
+                let total = saved?.students?.[roll]?.total || 0;
+                html += `<td class="total" id="t${row}">${total}</td></tr>`;
+            });
+            html += "</table>";
+            document.getElementById("attendanceTable").innerHTML = html;
+        }
+
+        function toggleHoliday(day) {
+            if (holidays.has(day)) holidays.delete(day);
+            else holidays.add(day);
+            saveAttendance();
+            render();
+        }
+
+        function updateTotal(row) {
+            let total = 0;
+            document.querySelectorAll(".r" + row).forEach(c => {
+                if (c.checked && !c.disabled) total++;
+            });
+            document.getElementById("t" + row).innerText = total;
+            saveAttendance();
+        }
+
+        function saveAttendance() {
+            let key = getKey();
+            attendanceData[key] = { holidays: [...holidays], students: {} };
+            students.forEach((roll, row) => {
+                let total = 0;
+                let days = [];
+                document.querySelectorAll(".r" + row).forEach((c, i) => {
+                    if (c.checked && !c.disabled) {
+                        total++;
+                        days.push(i + 1);
+                    }
+                });
+                attendanceData[key].students[roll] = { total: total, days: days };
+            });
+            localStorage.setItem(storageKey, JSON.stringify(attendanceData));
+            sendCombinedAttendance();
+        }
+
+        function getCombinedAttendance() {
+            let result = {};
+
+            for (let monthKey in attendanceData) {
+                let monthObj = attendanceData[monthKey];
+
+                // 🔹 Step 1: Find max day from ANY student
+                let maxDay = 0;
+
+                for (let roll in monthObj.students) {
+                    let days = monthObj.students[roll].days || [];
+                    if (days.length > 0) {
+                        let studentMax = Math.max(...days);
+                        if (studentMax > maxDay) {
+                            maxDay = studentMax;
+                        }
+                    }
+                }
+
+                // अगर किसी ने attendance mark ही नहीं की
+                if (maxDay === 0) continue;
+
+                // 🔹 Step 2: Count holidays till maxDay
+                let holidaysTillMax = (monthObj.holidays || [])
+                    .filter(d => d <= maxDay).length;
+
+                let totalClasses = maxDay - holidaysTillMax;
+
+                // 🔹 Step 3: For each student
+                students.forEach(roll => {
+                    if (!result[roll]) {
+                        result[roll] = { daysPresent: 0, total_days: 0 };
+                    }
+
+                    let studentData = monthObj.students[roll];
+
+                    // attended = size of days array
+                    let attended = studentData?.days?.length || 0;
+
+                    result[roll].daysPresent += attended;
+                    result[roll].total_days += totalClasses;
+                });
+            }
+
+            return result;
+        }
+
+        async function sendCombinedAttendance() {
+            let combinedAttendance = getCombinedAttendance();
+            await fetch(`${API_BASE}/update-attendance`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ classId: classId, combinedAttendance: combinedAttendance })
+            });
+        }
+
+        async function init() {
+            try {
+                const res = await fetch(`${API_BASE}/init/${classId}`, { credentials: "include" });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.students) {
+                        students.length = 0; // Clear existing
+                        data.students.forEach(s => students.push(s.studentRoll));
+                    }
+                    initDropdowns(data.duration);
+                }
+            } catch (error) {
+                console.error("Init failed", error);
+            }
+            render();
+        }
+
+        function render() { generateTable(); }
+
+        document.getElementById("load").onclick = render;
+        monthSelect.onchange = render;
+        yearSelect.onchange = () => {
+             updateMonthDropdown(yearSelect.value);
+             render();
+        };
+        init();
+    </script>
+</body>
+
+</html>
