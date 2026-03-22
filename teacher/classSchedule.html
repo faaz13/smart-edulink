@@ -9,81 +9,211 @@
   <style>
     body {
       margin: 0;
-      font-family:
-        Segoe UI,
-        sans-serif;
-      background: #f3f6ff;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #1e1b4b, #0f172a, #020617);
+      background-size: 200% 200%;
+      min-height: 100vh;
+      color: #f8fafc;
     }
 
     header {
-      background: #0b3d91;
-      color: #fff;
-      padding: 15px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      color: #f8fafc;
+      padding: 22px 30px;
       display: flex;
       justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    header h3 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, #94a3b8);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
     }
 
     .container {
-      padding: 20px;
+      padding: 35px;
       max-width: 1000px;
       margin: auto;
     }
 
     .controls {
       display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"], input[type="time"], select {
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: #f8fafc;
+      outline: none;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    
+    input[type="text"]:focus, input[type="time"]:focus, select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    
+    input[type="text"]::placeholder {
+      color: #64748b;
+    }
+    
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+      opacity: 0.7;
+      transition: 0.2s;
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+    
+    option {
+      background: #0f172a;
+      color: #f8fafc;
     }
 
     .day-card {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 12px;
-      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      padding: 24px;
+      margin-bottom: 20px;
+      border-radius: 16px;
       display: flex;
       justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      align-items: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+    }
+    
+    .day-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+    
+    .day-card strong {
+      color: #818cf8;
+      font-size: 18px;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    
+    .day-card div {
+      font-size: 15px;
+      color: #cbd5e1;
+      line-height: 1.5;
     }
 
     button {
-      padding: 7px 12px;
+      padding: 12px 20px;
       border: none;
-      border-radius: 6px;
+      border-radius: 12px;
       cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
+    
+    button:hover {
+      background: rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+      transform: translateY(-2px);
+    }
+    
     .reset {
-      background: #2559dd;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
       color: white;
+      border: none;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
     }
-
-    input[type="text"] {
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    
+    .reset:hover {
+      background: linear-gradient(135deg, #4f46e5, #2563eb);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
     }
 
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       display: none;
       align-items: center;
       justify-content: center;
+      z-index: 50;
     }
 
     .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 350px;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 35px;
+      border-radius: 20px;
+      width: 420px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      animation: modalEnter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    @keyframes modalEnter {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    
+    .modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 25px;
+      color: #f8fafc;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
     .modal-content input,
     .modal-content select {
       width: 100%;
-      margin-bottom: 10px;
-      padding: 8px;
+      margin-bottom: 18px;
+    }
+    
+    .modal-content button {
+      margin-top: 15px;
+      margin-right: 12px;
+      padding: 14px 24px;
+    }
+    
+    .modal-content button:first-of-type {
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+    
+    .modal-content button:first-of-type:hover {
+      background: linear-gradient(135deg, #4f46e5, #2563eb);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
     }
   </style>
 </head>
