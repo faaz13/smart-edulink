@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom View</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: rgba(99, 102, 241, 0.1);
+            --secondary: #94a3b8;
+            --white: #ffffff;
+            --bg-light: #0f172a;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-color: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
+            background-size: 200% 200%;
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+
+        .nav-item {
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            height: 70px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .class-name {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .view-port {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .stat-box.highlight {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+        }
+
+        .stat-box.highlight .stat-val,
+        .stat-box.highlight .stat-label {
+            color: var(--text-color);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--secondary);
+            text-align: left;
+            padding: 12px 15px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        /* Chat Container */
+        #chat-view iframe {
+            width: 100%;
+            height: calc(100vh - 150px);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            background: transparent;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <a class="back-btn" href="showclass.html">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Dashboard
+        </a>
+        <div class="nav-item active" onclick="switchTab('marks', this)">Marks</div>
+        <div class="nav-item" onclick="switchTab('attendance', this)">Attendance</div>
+        <div class="nav-item" onclick="switchTab('schedule', this)">Schedule</div>
+        <div class="nav-item" onclick="switchTab('chat', this)">Class Chat</div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="class-name" id="classTitle">Loading Class...</div>
+            <div id="studentRoll" style="font-weight: 600; color: var(--secondary);">Roll: --</div>
+        </header>
+
+        <div class="view-port">
+
+            <section id="marks-view">
+                <div class="card">
+                    <h2 style="margin-bottom: 2rem;">Performance Summary</h2>
+
+                    <!-- Internal Marks -->
+                    <h3 style="margin-top:20px; color: var(--primary); font-size: 1.1rem; margin-bottom: 1rem;">Internal
+                        Marks</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-val" id="val-mid1">0 / 15</span>
+                            <span class="stat-label">MID SEM 1</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="val-mid2">0 / 15</span>
+                            <span class="stat-label">MID SEM 2</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="val-ta">0 / 10</span>
+                            <span class="stat-label">TEACHER ASSESSMENT</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="val-att">0 / 10</span>
+                            <span class="stat-label">ATTENDANCE</span>
+                        </div>
+                    </div>
+
+                    <!-- External Marks -->
+                    <h3 style="margin-top:25px; color: var(--primary); font-size: 1.1rem; margin-bottom: 1rem;">External
+                        Marks</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-val" id="val-endsem">0 / 50</span>
+                            <span class="stat-label">END SEMESTER</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Performance -->
+                    <h3 style="margin-top:25px; color: var(--primary); font-size: 1.1rem; margin-bottom: 1rem;">Total
+                        Performance</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box highlight">
+                            <span class="stat-val" id="val-total">0 / 100</span>
+                            <span class="stat-label">TOTAL MARKS</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="val-percentage">0%</span>
+                            <span class="stat-label">PERCENTAGE</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="val-cgpa">0</span>
+                            <span class="stat-label">CGPA</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="val-grade">--</span>
+                            <span class="stat-label">GRADE</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance View -->
+            <section id="attendance-view" class="hidden">
+                <div class="card">
+                    <h2 style="margin-bottom: 2rem;">Attendance Summary</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-val" id="att-count">0</span>
+                            <span class="stat-label">Classes Attended</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-val" id="class-count">0</span>
+                            <span class="stat-label">Total Classes Held </span>
+                        </div>
+                        <div class="stat-box" style="background: var(--primary); color: white;">
+                            <span class="stat-val" id="att-percent" style="color: white;">0%</span>
+                            <span class="stat-label" style="color: rgba(255,255,255,0.9);">Attendance Percentage</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--secondary); margin-top: 1.5rem; text-align: center;">Detailed attendance records
+                    are managed by your instructor.</p>
+            </section>
+
+            <!-- Schedule View -->
+            <section id="schedule-view" class="hidden">
+                <div class="card">
+                    <h2 style="margin-bottom: 1rem;">Weekly Timetable</h2>
+                    <table id="scheduleTable">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Time</th>
+                                <th>Topic</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Chat View -->
+            <section id="chat-view" class="hidden">
+                <iframe id="chatFrame"></iframe>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = "https://edulink-backend-o3hw.onrender.com/api/v1";
+        const params = new URLSearchParams(window.location.search);
+        const classId = params.get('classId');
+        let currentStudentRoll = "";
+
+        if (!classId) window.location.href = "showclass.html";
+
+        async function init() {
+            try {
+                // 1. Get User Info
+                const userRes = await fetch(`${API_BASE}/currentUser`, { method: "POST", credentials: "include" });
+                const userData = await userRes.json();
+                if (userData.success) {
+                    currentStudentRoll = userData.user.collegerollnumber;
+                    document.getElementById('studentRoll').innerText = "Roll: " + currentStudentRoll;
+                }
+
+                // 2. Get Class Details
+                const classRes = await fetch(`${API_BASE}/details/${classId}`, { credentials: "include" });
+                const classData = await classRes.json();
+                if (classData.success) {
+                    const cls = classData.data;
+                    document.getElementById('classTitle').innerText = `${cls.name} (${cls.code})`;
+                    renderSchedule(cls.timetable);
+
+                    // Filter student's own marks and attendance from the class data
+                    const me = cls.students.find(s => s.studentRoll === currentStudentRoll);
+                    if (me) {
+                        renderMarks(me.marks || {}, me.attendance || { present: 0, total: 0 });
+                        renderAttendance(me.attendance || { present: 0, total: 0 });
+                    }
+                }
+
+                // Set Chat URL
+                document.getElementById('chatFrame').src = `chat.html?classId=${classId}`;
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function getAttendanceMarks(attendance) {
+            if (!attendance || attendance.total === 0) return 0;
+            let percent = (attendance.present / attendance.total) * 100;
+            if (percent > 90) return 10;
+            if (percent > 80) return 9;
+            if (percent > 75) return 8;
+            return 0;
+        }
+
+        function renderMarks(m, attendance) {
+            let m1 = m.mid1 || 0;
+            let m2 = m.mid2 || 0;
+            let ta = m.teacherAssessment || 0;
+            let es = m.endsem || 0;
+            let att = getAttendanceMarks(attendance);
+            let total = m1 + m2 + ta + es + att;
+            let percentage = total;
+
+            document.getElementById('val-mid1').innerText = m1 + " / 15";
+            document.getElementById('val-mid2').innerText = m2 + " / 15";
+            document.getElementById('val-ta').innerText = ta + " / 10";
+            document.getElementById('val-att').innerText = att + " / 10";
+            document.getElementById('val-endsem').innerText = es + " / 50";
+            document.getElementById('val-total').innerText = total + " / 100";
+            document.getElementById('val-percentage').innerText = percentage + "%";
+
+            // CGPA / Grade
+            let grade = "";
+            let cgpa = 0;
+            if (total >= 85) { grade = "A+"; cgpa = 10; }
+            else if (total >= 75) { grade = "A"; cgpa = 9; }
+            else if (total >= 65) { grade = "B"; cgpa = 8; }
+            else if (total >= 50) { grade = "C"; cgpa = 6; }
+            else if (total >= 40) { grade = "D"; cgpa = 4; }
+            else { grade = "E"; cgpa = 2; }
+
+            document.getElementById("val-cgpa").innerText = cgpa;
+            document.getElementById("val-grade").innerText = grade;
+        }
+
+        function renderAttendance(a) {
+            const present = a.present || 0;
+            const total = a.total || 0;
+            const percent = total === 0 ? 0 : Math.round((present / total) * 100);
+
+            document.getElementById('att-count').innerText = present;
+            document.getElementById('class-count').innerText = total;
+            document.getElementById('att-percent').innerText = percent + "%";
+        }
+
+        function renderSchedule(list) {
+            const tbody = document.querySelector('#scheduleTable tbody');
+            tbody.innerHTML = "";
+            list.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${item.day}</td><td>${item.time}</td><td>${item.topic}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function switchTab(tab, el) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+
+            ['marks', 'attendance', 'schedule', 'chat'].forEach(id => {
+                document.getElementById(id + '-view').classList.add('hidden');
+            });
+            document.getElementById(tab + '-view').classList.remove('hidden');
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

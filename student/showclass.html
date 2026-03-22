@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduLink Student Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #94a3b8;
+      --bg-light: #0f172a;
+      --white: rgba(255, 255, 255, 0.03); 
+      --text-color: #f8fafc;
+      --sidebar-width: 260px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
+      background-size: 200% 200%;
+      color: var(--text-color);
+      overflow: hidden;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid var(--border-color);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2.5rem;
+      color: var(--text-color);
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-item {
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .nav-item.active {
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+
+    /* --- Main Content --- */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- Header --- */
+    .top-header {
+      height: 70px;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logout-btn {
+      background: rgba(239, 68, 68, 0.8);
+      color: white;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 0.5rem 1.25rem;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: opacity 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #ef4444;
+      opacity: 0.9;
+    }
+
+    /* --- Dynamic Viewport --- */
+    #content-frame {
+      flex: 1;
+      width: 100%;
+      height: calc(100vh - 70px);
+      border: none;
+      background: transparent;
+    }
+
+    #view-container {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--white);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .card-badge {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .card-footer {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--secondary);
+      display: flex;
+      gap: 10px;
+    }
+
+    .section-header {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+      EduLink
+    </div>
+    <nav class="nav">
+      <div class="nav-item active" onclick="loadContent('dashboard')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+        </svg>
+        My Classes
+      </div>
+      <div class="nav-item" onclick="loadContent('join')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="8.5" cy="7" r="4" />
+          <line x1="20" y1="8" x2="20" y2="14" />
+          <line x1="17" y1="11" x2="23" y2="11" />
+        </svg>
+        Join a Class
+      </div>
+      <div class="nav-item" onclick="loadContent('todo')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 11 12 14 22 4" />
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+        </svg>
+        To-Do List
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-header">
+      <div>
+        <h2 id="page-title">Joined Classes</h2>
+      </div>
+      <div class="user-info">
+        <span class="user-name" id="userName">Student</span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <div id="view-container">
+      <!-- Dynamic Content Loaded Here -->
+      <div id="dashboard-view">
+        <div class="section-header">
+          <p class="user-name">Welcome back, get started with your classes.</p>
+        </div>
+        <div id="classesList" class="dashboard-grid">
+          <div class="loading-spinner">Fetching your classes...</div>
+        </div>
+      </div>
+
+      <iframe id="content-frame" style="display: none;"></iframe>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = "https://edulink-backend-o3hw.onrender.com/api/v1";
+
+    // Auth Check
+    (async function checkAuth() {
+      try {
+        const res = await fetch(`${API_BASE}/currentUser`, {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          window.location.href = "../login.html";
+        }
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('userName').innerText = data.user.fullname;
+          fetchClasses();
+        }
+      } catch (error) {
+        window.location.href = "../login.html";
+      }
+    })();
+    function formatDuration(from, to) {
+      if (!from || !to) return "N/A";
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const start = new Date(from);
+      const end = new Date(to);
+      const startStr = months[start.getMonth()] + start.getFullYear().toString().slice(-2);
+      const endStr = months[end.getMonth()] + end.getFullYear().toString().slice(-2);
+      return `${startStr} - ${endStr}`;
+    }
+
+    async function fetchClasses() {
+      const list = document.getElementById('classesList');
+      try {
+        const res = await fetch(`${API_BASE}/student/joined-classes`, { credentials: "include" });
+        const data = await res.json();
+
+        if (data.success && data.data.length > 0) {
+          list.innerHTML = "";
+          data.data.forEach(cls => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => window.location.href = `studentview.html?classId=${cls._id}`;
+            card.innerHTML = `
+                            <div class="card-header">
+                                <span class="card-badge">${cls.code}</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                            <h3 class="card-title">${cls.name}</h3>
+                            <div class="card-footer">
+                                <span>Duration: ${formatDuration(cls.duration.from, cls.duration.to)}</span>
+                            </div>
+                        `;
+            list.appendChild(card);
+          });
+        } else {
+          list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
+                        You haven't joined any classes yet.
+                        <br><br>
+                        <button class="logout-btn" style="background: var(--primary)" onclick="loadContent('join')">Join Class Now</button>
+                    </div>`;
+        }
+      } catch (error) {
+        list.innerHTML = `<div style="color: red;">Error fetching classes.</div>`;
+      }
+    }
+
+    function loadContent(type) {
+      const frame = document.getElementById('content-frame');
+      const dashboard = document.getElementById('dashboard-view');
+      const navItems = document.querySelectorAll('.nav-item');
+      const pageTitle = document.getElementById('page-title');
+
+      navItems.forEach(item => item.classList.remove('active'));
+
+      if (type === 'dashboard') {
+        frame.style.display = 'none';
+        dashboard.style.display = 'block';
+        navItems[0].classList.add('active');
+        pageTitle.innerText = "Joined Classes";
+        fetchClasses();
+      } else if (type === 'join') {
+        dashboard.style.display = 'none';
+        frame.style.display = 'block';
+        frame.src = "joinclass.html";
+        navItems[1].classList.add('active');
+        pageTitle.innerText = "Find New Class";
+      } else if (type === 'todo') {
+        dashboard.style.display = 'none';
+        frame.style.display = 'block';
+        frame.src = "todo.html";
+        navItems[2].classList.add('active');
+        pageTitle.innerText = "Personal Tasks";
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch(`${API_BASE}/logout/student`, { method: "POST", credentials: "include" });
+        window.location.href = "../login.html";
+      } catch (err) {
+        alert("Logout failed");
+      }
+    }
+  </script>
+</body>
+
+</html>
