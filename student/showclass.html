@@ -304,7 +304,7 @@
           credentials: "include",
         });
         if (!res.ok) {
-          window.location.href = "../LOGIN.html";
+          window.location.href = "../login.html";
         }
         const data = await res.json();
         if (data.success) {
@@ -312,7 +312,7 @@
           fetchClasses();
         }
       } catch (error) {
-        window.location.href = "../LOGIN.html";
+        window.location.href = "../login.html";
       }
     })();
     function formatDuration(from, to) {
@@ -393,7 +393,7 @@
     async function logout() {
       try {
         await fetch(`${API_BASE}/logout/student`, { method: "POST", credentials: "include" });
-        window.location.href = "../LOGIN.html";
+        window.location.href = "../login.html";
       } catch (err) {
         alert("Logout failed");
       }
