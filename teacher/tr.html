@@ -1,225 +1,396 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <title>Teacher Dashboard – EduLink</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard | EduLink</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* GLOBAL */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
     :root {
       --primary: #6366f1;
-      --bg-light: #0f172a;
+      --primary-dark: #4f46e5;
+      --secondary: #0ea5e9;
+      --bg-dark: #020617;
       --card-bg: rgba(255, 255, 255, 0.03);
-      --border-color: rgba(255, 255, 255, 0.08);
-      --text-color: #f8fafc;
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+      --sidebar-width: 260px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Segoe UI", sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
 
     body {
-      height: 100vh;
-      display: flex;
+      min-height: 100vh;
       background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
-      background-size: 200% 200%;
-      color: var(--text-color);
+      background-size: cover;
+      color: var(--text-main);
+      display: flex;
+      overflow: hidden;
     }
 
-    /* SIDEBAR */
+    /* Ambient Blobs */
+    .blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      filter: blur(120px);
+      opacity: 0.1;
+      border-radius: 50%;
+      z-index: -1;
+      pointer-events: none;
+    }
 
+    .blob-1 { top: -200px; right: -200px; }
+    .blob-2 { bottom: -200px; left: -200px; }
+
+    /* Sidebar */
     .sidebar {
-      width: 220px;
-      padding: 30px;
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(12px);
-      border-right: 1px solid var(--border-color);
+      width: var(--sidebar-width);
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.5rem;
+      z-index: 10;
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0.75rem;
+      margin-bottom: 3rem;
+      text-decoration: none;
     }
 
     .logo img {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
     }
 
     .logo h2 {
-      font-size: 22px;
-      font-weight: 600;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
     }
 
-    /* MAIN */
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.875rem 1rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      border-radius: 12px;
+      transition: var(--transition);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .nav-item i { font-size: 1.1rem; }
+
+    .nav-item:hover, .nav-item.active {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      transform: translateX(5px);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.05));
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      color: var(--primary);
+    }
+
+    .logout-btn {
+      margin-top: auto;
+      color: #ef4444;
+    }
+
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+    }
+
+    /* Main Content */
     .main {
       flex: 1;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
-
-    /* TOPBAR */
 
     .topbar {
       height: 80px;
+      padding: 0 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 40px;
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.01);
+      backdrop-filter: blur(10px);
     }
 
-    /* RECTANGULAR CREATE BUTTON */
-
-    .create-btn {
-      padding: 10px 24px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), #4f46e5);
-      color: white;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .search-bar {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      gap: 0.75rem;
+      width: 300px;
+      transition: var(--transition);
+    }
+
+    .search-bar:focus-within {
+      border-color: var(--primary);
+      width: 350px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .search-bar input {
+      background: none;
+      border: none;
+      color: #fff;
+      outline: none;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .create-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
     }
 
     .create-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-      filter: brightness(1.1);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.5);
     }
 
-    .create-btn:active {
-      transform: translateY(0) scale(0.98);
-    }
-
-    .create-btn svg {
-      transition: transform 0.3s ease;
-    }
-
-    .create-btn:hover svg {
-      transform: rotate(90deg);
-    }
-
-    /* ICONS */
-
-    .icons {
-      display: flex;
-      gap: 20px;
-      font-size: 22px;
+    .icon-link {
+      color: var(--text-dim);
+      font-size: 1.25rem;
+      transition: var(--transition);
       cursor: pointer;
     }
 
-    /* CONTENT */
+    .icon-link:hover { color: #fff; transform: scale(1.1); }
 
     .content {
       flex: 1;
-      padding: 40px;
+      padding: 3rem;
       overflow-y: auto;
+      scrollbar-width: none;
     }
 
-    /* CLASS GRID */
+    .content::-webkit-scrollbar { display: none; }
 
-    #classList {
+    .header-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .header-section h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-section p { color: var(--text-dim); }
+
+    /* Class Grid */
+    .class-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 24px;
-      margin-top: 30px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
     }
 
-    /* CLASS CARD */
-
-    .class-box {
-      padding: 22px;
-      border-radius: 14px;
+    .class-card {
       background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.75rem;
       cursor: pointer;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      transition: 0.25s;
-      border: 1px solid var(--border-color);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
     }
 
-    .class-box:hover {
-      transform: translateY(-5px);
+    .class-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .class-card:hover {
+      transform: translateY(-10px);
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(99, 102, 241, 0.3);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
     }
 
-    .class-name {
-      font-size: 18px;
+    .class-card:hover::before { opacity: 1; }
+
+    .class-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
       font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-color);
+      margin-bottom: 0.5rem;
     }
 
-    .class-code {
-      font-size: 14px;
-      color: #94a3b8;
+    .card-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
     }
 
-    /* PAGE TITLE */
+    .card-footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-    .page-title {
-      font-size: 32px;
+    .view-btn {
+      color: var(--primary);
       font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .subtitle {
-      color: #94a3b8;
-      margin-top: 6px;
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar { width: 80px; padding: 2rem 1rem; }
+      .logo h2, .nav-item span { display: none; }
+      .sidebar-width { --sidebar-width: 80px; }
+      .topbar { padding: 0 1.5rem; }
     }
   </style>
 </head>
-
 <body>
-  <!-- SIDEBAR -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-  <div class="sidebar">
-    <div class="logo">
-      <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" />
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="#" class="logo">
+      <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" alt="EduLink Logo">
       <h2>EduLink</h2>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-
-  <div class="main">
-    <div class="topbar">
-      <button class="create-btn" onclick="openCreate()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        Create Class
-      </button>
-
-      <div class="icons">
-        <span onclick="window.location.href='help.html'" title="Help & Support" style="cursor: pointer; margin-right: 15px;">❓</span>
-        <span onclick="window.location.href='profile.html'" title="Profile" style="cursor: pointer; margin-right: 15px;">👤</span>
-        <span onclick="logout()" style="cursor: pointer;">Logout</span>
+    </a>
+    
+    <nav class="nav-menu">
+      <div class="nav-item active">
+        <i class="fas fa-th-large"></i>
+        <span>Dashboard</span>
       </div>
-    </div>
+
+      <div class="nav-item" onclick="window.location.href='help.html'">
+        <i class="fas fa-question-circle"></i>
+        <span>Help & Support</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='profile.html'">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+      </div>
+      <div class="nav-item logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main">
+    <header class="topbar">
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search your classes...">
+      </div>
+      
+      <div class="topbar-actions">
+        <button class="create-btn" onclick="openCreate()">
+          <i class="fas fa-plus"></i>
+          Create Class
+        </button>
+        <i class="fas fa-bell icon-link"></i>
+        <div class="icon-link" onclick="window.location.href='profile.html'">
+          <i class="fas fa-circle-user"></i>
+        </div>
+      </div>
+    </header>
 
     <div class="content">
-      <div class="page-title">Your Classes</div>
-      <div class="subtitle">Click a class to open the classroom</div>
+      <div class="header-section">
+        <h1>Teacher Dashboard</h1>
+        <p>Welcome back! Here are your active classrooms.</p>
+      </div>
 
-      <div id="classList"></div>
+      <div id="classList" class="class-grid">
+        <!-- Classes will be loaded here dynamically -->
+      </div>
     </div>
-  </div>
+  </main>
 
   <script>
     // Immediate Auth Check
@@ -264,7 +435,6 @@
     }
 
     /* Load classes from backend */
-
     async function loadClasses() {
       try {
         const res = await fetch(
@@ -276,32 +446,37 @@
         );
 
         const data = await res.json();
-
-        let classList = document.getElementById("classList");
+        const classList = document.getElementById("classList");
         classList.innerHTML = "";
 
-        data.classes.forEach((cls) => {
-          let div = document.createElement("div");
+        if (data.classes && data.classes.length > 0) {
+          data.classes.forEach((cls) => {
+            const card = document.createElement("div");
+            card.className = "class-card";
+            card.onclick = () => openClass(cls._id);
 
-          div.className = "class-box";
-
-          div.onclick = function () {
-            openClass(cls._id);
-          };
-
-          div.innerHTML = `
-<div class="class-name">${cls.name}</div>
-<div class="class-code">Total Students ${cls.students.length}</div>
-`;
-
-          classList.appendChild(div);
-        });
+            card.innerHTML = `
+              <div class="class-icon">
+                <i class="fas fa-chalkboard-user"></i>
+              </div>
+              <div class="card-title">${cls.name}</div>
+              <div class="card-info">
+                <i class="fas fa-users"></i>
+                <span>${cls.students ? cls.students.length : 0} Students enrolled</span>
+              </div>
+              <div class="card-footer">
+                <span class="view-btn">Enter Classroom <i class="fas fa-arrow-right"></i></span>
+              </div>
+            `;
+            classList.appendChild(card);
+          });
+        } else {
+          classList.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-dim); margin-top: 3rem;">No classes found. Create one to get started!</p>`;
+        }
       } catch (err) {
         console.log("Error loading classes", err);
       }
     }
-
-    /* Open classroom */
 
     function openClass(classId) {
       window.location.href = "./classroom_main.html?classId=" + classId;
@@ -310,5 +485,4 @@
     loadClasses();
   </script>
 </body>
-
 </html>
