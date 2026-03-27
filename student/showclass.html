@@ -11,12 +11,13 @@
       --primary: #6366f1;
       --primary-dark: #4f46e5;
       --secondary: #94a3b8;
-      --bg-light: #0f172a;
-      --white: rgba(255, 255, 255, 0.03); 
-      --text-color: #f8fafc;
+      --bg-dark: #0f172a;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
       --sidebar-width: 260px;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      --border-color: rgba(255, 255, 255, 0.08);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * {
@@ -27,23 +28,36 @@
     }
 
     body {
+      min-height: 100vh;
       background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
-      background-size: 200% 200%;
-      color: var(--text-color);
+      background-size: cover;
+      color: var(--text-main);
       overflow: hidden;
     }
 
-    /* --- Sidebar --- */
+    .blob {
+      position: absolute;
+      filter: blur(80px);
+      z-index: 0;
+      opacity: 0.2;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .blob-1 { top: -10%; left: -5%; width: 400px; height: 400px; background: #4f46e5; }
+    .blob-2 { bottom: -10%; right: -5%; width: 500px; height: 500px; background: #0ea5e9; }
+
     .sidebar {
       position: fixed;
       left: 0;
       top: 0;
       width: var(--sidebar-width);
       height: 100vh;
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(12px);
-      border-right: 1px solid var(--border-color);
-      padding: 2rem 1.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid var(--glass-border);
+      padding: 2.5rem 1.5rem;
       display: flex;
       flex-direction: column;
       z-index: 100;
@@ -53,10 +67,16 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 2.5rem;
-      color: var(--text-color);
+      margin-bottom: 3rem;
+      color: #fff;
       font-weight: 700;
       font-size: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .brand svg {
+      color: var(--primary);
+      filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
     }
 
     .nav {
@@ -66,151 +86,170 @@
     }
 
     .nav-item {
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      color: var(--secondary);
+      padding: 0.875rem 1.25rem;
+      border-radius: 16px;
+      color: var(--text-dim);
       text-decoration: none;
       font-weight: 500;
       display: flex;
       align-items: center;
       gap: 12px;
-      transition: all 0.3s ease;
+      transition: var(--transition);
       cursor: pointer;
     }
 
-    .nav-item:hover,
-    .nav-item.active {
-      background: rgba(99, 102, 241, 0.1);
-      color: var(--primary);
-      border: 1px solid rgba(99, 102, 241, 0.2);
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      transform: translateX(5px);
     }
 
     .nav-item.active {
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+      transform: translateX(5px);
     }
 
-    /* --- Main Content --- */
     .main-content {
       margin-left: var(--sidebar-width);
       height: 100vh;
       display: flex;
       flex-direction: column;
+      position: relative;
+      z-index: 1;
     }
 
-    /* --- Header --- */
     .top-header {
-      height: 70px;
-      background: rgba(255, 255, 255, 0.02);
+      height: 80px;
+      background: rgba(255, 255, 255, 0.015);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color);
-      padding: 0 2rem;
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    #page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
     .user-info {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.5rem;
     }
 
     .user-name {
       font-weight: 600;
-      color: var(--text-color);
+      color: #fff;
     }
 
     .logout-btn {
-      background: rgba(239, 68, 68, 0.8);
-      color: white;
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      padding: 0.5rem 1.25rem;
-      border-radius: 30px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px;
       font-weight: 600;
       cursor: pointer;
       font-size: 0.9rem;
-      transition: opacity 0.3s;
+      transition: var(--transition);
     }
 
     .logout-btn:hover {
       background: #ef4444;
-      opacity: 0.9;
-    }
-
-    /* --- Dynamic Viewport --- */
-    #content-frame {
-      flex: 1;
-      width: 100%;
-      height: calc(100vh - 70px);
-      border: none;
-      background: transparent;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
     }
 
     #view-container {
       flex: 1;
-      padding: 2rem;
+      padding: 3rem;
       overflow-y: auto;
+      scrollbar-width: none;
     }
+
+    #view-container::-webkit-scrollbar { display: none; }
 
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
     }
 
     .card {
-      background: var(--white);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 20px;
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      transition: transform 0.3s;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 2rem;
+      border: 1px solid var(--glass-border);
+      transition: var(--transition);
       cursor: pointer;
-      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), #0ea5e9);
+      opacity: 0;
+      transition: var(--transition);
     }
 
     .card:hover {
-      transform: translateY(-5px);
-      border-color: var(--primary);
-      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
     }
+
+    .card:hover::before { opacity: 1; }
 
     .card-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 1rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
     }
 
     .card-title {
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--text-color);
+      color: #fff;
+      line-height: 1.4;
     }
 
     .card-badge {
-      background: rgba(99, 102, 241, 0.2);
-      color: #818cf8;
-      padding: 4px 12px;
-      border-radius: 20px;
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 12px;
       font-size: 0.75rem;
-      font-weight: 600;
-      border: 1px solid rgba(99, 102, 241, 0.3);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(99, 102, 241, 0.2);
     }
 
     .card-footer {
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       font-size: 0.85rem;
-      color: var(--secondary);
+      color: var(--text-dim);
       display: flex;
-      gap: 10px;
+      align-items: center;
+      gap: 8px;
     }
 
-    .section-header {
-      margin-bottom: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .section-header p {
+      color: var(--text-dim);
+      margin-bottom: 2rem;
     }
 
     .loading-spinner {
@@ -221,10 +260,19 @@
       color: var(--primary);
       font-weight: 600;
     }
+
+    #content-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+    }
   </style>
 </head>
 
 <body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
   <aside class="sidebar">
     <div class="brand">
@@ -264,6 +312,14 @@
         </svg>
         To-Do List
       </div>
+      <div class="nav-item" onclick="loadContent('profile')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        My Profile
+      </div>
     </nav>
   </aside>
 
@@ -273,8 +329,6 @@
         <h2 id="page-title">Joined Classes</h2>
       </div>
       <div class="user-info">
-        <span onclick="window.location.href='help.html'" title="Help & Support" style="cursor: pointer; font-size: 1.25rem; margin-right: 10px;">❓</span>
-        <span onclick="window.location.href='profile.html'" title="Profile" style="cursor: pointer; font-size: 1.25rem; margin-right: 5px;">👤</span>
         <span class="user-name" id="userName">Student</span>
         <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
@@ -346,7 +400,7 @@
                             </div>
                             <h3 class="card-title">${cls.name}</h3>
                             <div class="card-footer">
-                                <span>Duration: ${formatDuration(cls.duration.from, cls.duration.to)}</span>
+                                <span>Duration: ${formatDuration(cls.duration?.from, cls.duration?.to)}</span>
                             </div>
                         `;
             list.appendChild(card);
@@ -389,6 +443,12 @@
         frame.src = "todo.html";
         navItems[2].classList.add('active');
         pageTitle.innerText = "Personal Tasks";
+      } else if (type === 'profile') {
+        dashboard.style.display = 'none';
+        frame.style.display = 'block';
+        frame.src = "profile.html";
+        navItems[3].classList.add('active');
+        pageTitle.innerText = "My Profile";
       }
     }
 
