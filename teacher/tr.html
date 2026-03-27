@@ -136,9 +136,14 @@
       border-radius: 12px;
     }
 
-    .icon-link:hover {
+    .icon-link:hover, .icon-link.active {
       background: rgba(255, 255, 255, 0.05);
       color: #fff;
+    }
+
+    .icon-link.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
     }
 
     .logout-btn {
@@ -237,30 +242,35 @@
       <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" />
       <h2>EduLink</h2>
     </div>
+    
+    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+      <div class="icon-link active">🏠 Dashboard</div>
+      <div class="icon-link" onclick="window.location.href='help.html'">❓ Help & Support</div>
+      <div class="icon-link" onclick="openProfile()">👤 My Profile</div>
+    </div>
   </div>
-
-  <!-- MAIN -->
 
   <div class="main">
     <div class="topbar">
-      <button class="create-btn" onclick="openCreate()">Create Class</button>
+      <div style="display: flex; align-items: center; gap: 2rem;">
+        <button class="create-btn" onclick="openCreate()">Create Class</button>
+      </div>
 
       <div class="icons">
-        <div class="icon-link" onclick="openProfile()">👤 Profile</div>
-        <div class="icon-link logout-btn" onclick="logout()">🚪 Logout</div>
+        <span id="teacherName" style="font-weight: 600; font-size: 0.95rem; opacity: 0.9;">Teacher</span>
+        <div class="icon-link logout-btn" onclick="logout()">Logout</div>
       </div>
     </div>
 
     <div class="content">
-      <div class="page-title">Your Classes</div>
-      <div class="subtitle">Click a class to open the classroom</div>
+      <div class="page-title">Teacher Dashboard</div>
+      <div class="subtitle" id="welcomeMsg">Welcome back! Manage your active classrooms here.</div>
 
       <div id="classList"></div>
     </div>
   </div>
 
   <script>
-    // Immediate Auth Check
     (async function checkAuth() {
       try {
         const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
@@ -270,12 +280,16 @@
         if (!res.ok) {
           window.location.href = "../login.html";
         }
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('teacherName').innerText = data.user.fullname;
+          document.getElementById('welcomeMsg').innerText = `Welcome back, ${data.user.fullname.split(' ')[0]}! Manage your active classrooms here.`;
+        }
       } catch (error) {
         window.location.href = "../login.html";
       }
     })();
 
-    // Intercept all fetch calls to handle 401 Unauthorized globally
     const originalFetch = window.fetch;
     window.fetch = async (...args) => {
       const response = await originalFetch(...args);
@@ -298,16 +312,12 @@
     }
 
     function openProfile() {
-      // The teacher profile will be displayed in the current window.
-      // Or we can just redirect to it.
       window.location.href = "profile.html";
     }
 
     function openCreate() {
       window.location.href = "createClass.html";
     }
-
-    /* Load classes from backend */
 
     async function loadClasses() {
       try {
@@ -320,32 +330,34 @@
         );
 
         const data = await res.json();
-
         let classList = document.getElementById("classList");
         classList.innerHTML = "";
 
-        data.classes.forEach((cls) => {
-          let div = document.createElement("div");
-
-          div.className = "class-box";
-
-          div.onclick = function () {
-            openClass(cls._id);
-          };
-
-          div.innerHTML = `
-<div class="class-name">${cls.name}</div>
-<div class="class-code">Total Students ${cls.students.length}</div>
-`;
-
-          classList.appendChild(div);
-        });
+        if (data.classes && data.classes.length > 0) {
+          data.classes.forEach((cls) => {
+            let div = document.createElement("div");
+            div.className = "class-box";
+            div.onclick = function () { openClass(cls._id); };
+            div.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                <span class="active-badge" style="background: rgba(99, 102, 241, 0.1); color: var(--primary); padding: 6px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.2);">ACTIVE</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.5;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+              <div class="class-name">${cls.name}</div>
+              <div class="class-code">
+                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: middle; opacity: 0.7;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                 ${cls.students.length} Students enrolled
+              </div>
+            `;
+            classList.appendChild(div);
+          });
+        } else {
+          classList.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-dim);">No classes created yet. Use the button above to get started!</div>`;
+        }
       } catch (err) {
         console.log("Error loading classes", err);
       }
     }
-
-    /* Open classroom */
 
     function openClass(classId) {
       window.location.href = "./classroom_main.html?classId=" + classId;
