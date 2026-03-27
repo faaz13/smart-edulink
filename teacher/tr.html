@@ -1,19 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Dashboard | EduLink</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Dashboard – EduLink</title>
+
+  <style>
     :root {
       --primary: #6366f1;
       --primary-dark: #4f46e5;
       --secondary: #0ea5e9;
       --bg-dark: #020617;
-      --card-bg: rgba(255, 255, 255, 0.03);
+      --glass-bg: rgba(255, 255, 255, 0.03);
       --glass-border: rgba(255, 255, 255, 0.08);
       --text-main: #f8fafc;
       --text-dim: #94a3b8;
@@ -37,45 +35,44 @@
       overflow: hidden;
     }
 
-    /* Ambient Blobs */
     .blob {
       position: absolute;
       width: 500px;
       height: 500px;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       filter: blur(120px);
-      opacity: 0.1;
+      opacity: 0.15;
       border-radius: 50%;
-      z-index: -1;
+      z-index: 0;
       pointer-events: none;
     }
 
     .blob-1 { top: -200px; right: -200px; }
     .blob-2 { bottom: -200px; left: -200px; }
 
-    /* Sidebar */
     .sidebar {
       width: var(--sidebar-width);
-      background: rgba(255, 255, 255, 0.01);
-      backdrop-filter: blur(20px);
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border-right: 1px solid var(--glass-border);
       display: flex;
       flex-direction: column;
-      padding: 2rem 1.5rem;
+      padding: 2.5rem 1.5rem;
       z-index: 10;
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 12px;
       margin-bottom: 3rem;
       text-decoration: none;
     }
 
     .logo img {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
     }
@@ -83,63 +80,16 @@
     .logo h2 {
       font-size: 1.5rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #fff;
       letter-spacing: -0.5px;
     }
 
-    .nav-menu {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.875rem 1rem;
-      color: var(--text-dim);
-      text-decoration: none;
-      border-radius: 12px;
-      transition: var(--transition);
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .nav-item i { font-size: 1.1rem; }
-
-    .nav-item:hover, .nav-item.active {
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
-      transform: translateX(5px);
-    }
-
-    .nav-item.active {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.05));
-      border: 1px solid rgba(99, 102, 241, 0.2);
-      color: var(--primary);
-    }
-
-    .logout-btn {
-      margin-top: auto;
-      color: #ef4444;
-    }
-
-    .logout-btn:hover {
-      background: rgba(239, 68, 68, 0.1);
-      color: #f87171;
-    }
-
-    /* Main Content */
     .main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      position: relative;
+      z-index: 1;
     }
 
     .topbar {
@@ -149,53 +99,17 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--glass-border);
-      background: rgba(255, 255, 255, 0.01);
+      background: rgba(255, 255, 255, 0.015);
       backdrop-filter: blur(10px);
-    }
-
-    .search-bar {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-border);
-      padding: 0.6rem 1.2rem;
-      border-radius: 50px;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      width: 300px;
-      transition: var(--transition);
-    }
-
-    .search-bar:focus-within {
-      border-color: var(--primary);
-      width: 350px;
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .search-bar input {
-      background: none;
-      border: none;
-      color: #fff;
-      outline: none;
-      width: 100%;
-      font-size: 0.9rem;
-    }
-
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
     }
 
     .create-btn {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: #fff;
       border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 12px;
+      padding: 0.75rem 1.75rem;
+      border-radius: 14px;
       font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
       cursor: pointer;
       transition: var(--transition);
       box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
@@ -206,57 +120,77 @@
       box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.5);
     }
 
-    .icon-link {
-      color: var(--text-dim);
-      font-size: 1.25rem;
-      transition: var(--transition);
-      cursor: pointer;
+    .icons {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
     }
 
-    .icon-link:hover { color: #fff; transform: scale(1.1); }
+    .icon-link {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: var(--transition);
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+    }
+
+    .icon-link:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .logout-btn {
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
 
     .content {
       flex: 1;
-      padding: 3rem;
+      padding: 3.5rem;
       overflow-y: auto;
       scrollbar-width: none;
     }
 
     .content::-webkit-scrollbar { display: none; }
 
-    .header-section {
-      margin-bottom: 2.5rem;
-    }
-
-    .header-section h1 {
+    .page-title {
       font-size: 2.25rem;
       font-weight: 700;
       letter-spacing: -1px;
       margin-bottom: 0.5rem;
     }
 
-    .header-section p { color: var(--text-dim); }
+    .subtitle {
+      color: var(--text-dim);
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+    }
 
-    /* Class Grid */
-    .class-grid {
+    #classList {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 2rem;
     }
 
-    .class-card {
-      background: var(--card-bg);
+    .class-box {
+      background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 1.75rem;
+      border-radius: 24px;
+      padding: 2rem;
       cursor: pointer;
       transition: var(--transition);
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
     }
 
-    .class-card::before {
+    .class-box::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
@@ -266,131 +200,64 @@
       transition: var(--transition);
     }
 
-    .class-card:hover {
+    .class-box:hover {
       transform: translateY(-10px);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       border-color: rgba(99, 102, 241, 0.3);
       box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
     }
 
-    .class-card:hover::before { opacity: 1; }
+    .class-box:hover::before { opacity: 1; }
 
-    .class-icon {
-      width: 50px;
-      height: 50px;
-      background: rgba(99, 102, 241, 0.1);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
+    .class-name {
       font-size: 1.5rem;
-      margin-bottom: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #fff;
     }
 
-    .card-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .card-info {
+    .class-code {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       color: var(--text-dim);
-      font-size: 0.9rem;
-    }
-
-    .card-footer {
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--glass-border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .view-btn {
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .sidebar { width: 80px; padding: 2rem 1rem; }
-      .logo h2, .nav-item span { display: none; }
-      .sidebar-width { --sidebar-width: 80px; }
-      .topbar { padding: 0 1.5rem; }
+      font-size: 0.95rem;
+      font-weight: 500;
     }
   </style>
 </head>
+
 <body>
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
+  <!-- SIDEBAR -->
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <a href="#" class="logo">
-      <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" alt="EduLink Logo">
+  <div class="sidebar">
+    <div class="logo">
+      <img src="https://raw.githubusercontent.com/faaz13/LOGO/main/LOGO.jpeg" />
       <h2>EduLink</h2>
-    </a>
-    
-    <nav class="nav-menu">
-      <div class="nav-item active">
-        <i class="fas fa-th-large"></i>
-        <span>Dashboard</span>
-      </div>
+    </div>
+  </div>
 
-      <div class="nav-item" onclick="window.location.href='help.html'">
-        <i class="fas fa-question-circle"></i>
-        <span>Help & Support</span>
-      </div>
-      <div class="nav-item" onclick="window.location.href='profile.html'">
-        <i class="fas fa-user-circle"></i>
-        <span>Profile</span>
-      </div>
-      <div class="nav-item logout-btn" onclick="logout()">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>Logout</span>
-      </div>
-    </nav>
-  </aside>
+  <!-- MAIN -->
 
-  <!-- Main Content Area -->
-  <main class="main">
-    <header class="topbar">
-      <div class="search-bar">
-        <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search your classes...">
-      </div>
-      
-      <div class="topbar-actions">
-        <button class="create-btn" onclick="openCreate()">
-          <i class="fas fa-plus"></i>
-          Create Class
-        </button>
-        <i class="fas fa-bell icon-link"></i>
-        <div class="icon-link" onclick="window.location.href='profile.html'">
-          <i class="fas fa-circle-user"></i>
-        </div>
-      </div>
-    </header>
+  <div class="main">
+    <div class="topbar">
+      <button class="create-btn" onclick="openCreate()">Create Class</button>
 
-    <div class="content">
-      <div class="header-section">
-        <h1>Teacher Dashboard</h1>
-        <p>Welcome back! Here are your active classrooms.</p>
-      </div>
-
-      <div id="classList" class="class-grid">
-        <!-- Classes will be loaded here dynamically -->
+      <div class="icons">
+        <div class="icon-link" onclick="openProfile()">👤 Profile</div>
+        <div class="icon-link logout-btn" onclick="logout()">🚪 Logout</div>
       </div>
     </div>
-  </main>
+
+    <div class="content">
+      <div class="page-title">Your Classes</div>
+      <div class="subtitle">Click a class to open the classroom</div>
+
+      <div id="classList"></div>
+    </div>
+  </div>
 
   <script>
     // Immediate Auth Check
@@ -430,11 +297,18 @@
       window.location.href = "../login.html";
     }
 
+    function openProfile() {
+      // The teacher profile will be displayed in the current window.
+      // Or we can just redirect to it.
+      window.location.href = "profile.html";
+    }
+
     function openCreate() {
       window.location.href = "createClass.html";
     }
 
     /* Load classes from backend */
+
     async function loadClasses() {
       try {
         const res = await fetch(
@@ -446,37 +320,32 @@
         );
 
         const data = await res.json();
-        const classList = document.getElementById("classList");
+
+        let classList = document.getElementById("classList");
         classList.innerHTML = "";
 
-        if (data.classes && data.classes.length > 0) {
-          data.classes.forEach((cls) => {
-            const card = document.createElement("div");
-            card.className = "class-card";
-            card.onclick = () => openClass(cls._id);
+        data.classes.forEach((cls) => {
+          let div = document.createElement("div");
 
-            card.innerHTML = `
-              <div class="class-icon">
-                <i class="fas fa-chalkboard-user"></i>
-              </div>
-              <div class="card-title">${cls.name}</div>
-              <div class="card-info">
-                <i class="fas fa-users"></i>
-                <span>${cls.students ? cls.students.length : 0} Students enrolled</span>
-              </div>
-              <div class="card-footer">
-                <span class="view-btn">Enter Classroom <i class="fas fa-arrow-right"></i></span>
-              </div>
-            `;
-            classList.appendChild(card);
-          });
-        } else {
-          classList.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-dim); margin-top: 3rem;">No classes found. Create one to get started!</p>`;
-        }
+          div.className = "class-box";
+
+          div.onclick = function () {
+            openClass(cls._id);
+          };
+
+          div.innerHTML = `
+<div class="class-name">${cls.name}</div>
+<div class="class-code">Total Students ${cls.students.length}</div>
+`;
+
+          classList.appendChild(div);
+        });
       } catch (err) {
         console.log("Error loading classes", err);
       }
     }
+
+    /* Open classroom */
 
     function openClass(classId) {
       window.location.href = "./classroom_main.html?classId=" + classId;
@@ -485,4 +354,5 @@
     loadClasses();
   </script>
 </body>
+
 </html>
