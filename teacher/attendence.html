@@ -4,109 +4,284 @@
 <head>
     <meta charset="UTF-8">
     <title>Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6366f1;
-            --bg-light: #0f172a;
-            --text-color: #f8fafc;
-            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-dark: #4f46e5;
+            --secondary: #0ea5e9;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--glass-border) transparent;
+        }
+
+        *::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 10px;
         }
 
         body {
             margin: 0;
-            font-family: "Segoe UI", sans-serif;
-            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
             background: transparent;
+            overflow-x: hidden;
         }
 
         .container {
-            height: 100%;
-            padding: 20px;
+            padding: 24px;
+            max-width: 100%;
+        }
+
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         h2 {
-            color: var(--text-color);
-            margin-bottom: 15px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .controls {
-            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
         }
 
-        select,
-        button {
-            padding: 7px 10px;
-            margin-right: 10px;
-            background: rgba(255,255,255,0.05);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        select {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         option {
-            background: var(--bg-light);
-            color: var(--text-color);
+            background: #1e1b4b;
+            color: white;
+        }
+
+        #load {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+            font-family: inherit;
+        }
+
+        #load:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
         }
 
         .table-wrapper {
             width: 100%;
             overflow-x: auto;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
         }
 
         table {
-            border-collapse: collapse;
-            min-width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
         }
 
-        th,
-        td {
-            border: 1px solid var(--border-color);
-            padding: 6px;
+        th, td {
+            padding: 12px 8px;
             text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+            font-size: 0.85rem;
+        }
+
+        th:last-child, td:last-child {
+            border-right: none;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
         }
 
         th {
-            background: rgba(99,102,241,0.2);
-            color: var(--text-color);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th.date {
             cursor: pointer;
+            transition: var(--transition);
+            min-width: 40px;
         }
 
         th.date:hover {
-            background: rgba(99,102,241,0.4);
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
         }
 
         th.holiday {
-            background: rgba(239, 68, 68, 0.4) !important;
-            color: white;
-            font-weight: bold;
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #f87171 !important;
+        }
+
+        td:first-child, th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            background: #0f172a; /* Solid color for sticky column to avoid transparency issues */
+            min-width: 80px;
+            border-right: 2px solid var(--glass-border);
+        }
+        
+        th:first-child {
+            z-index: 30;
         }
 
         .total {
-            font-weight: bold;
-            background: rgba(255,255,255,0.05);
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
         }
 
-        #load {
-            border-radius: 5px;
-            background: var(--primary);
-            border: none;
-            color: white;
-            transition: 0.3s;
-        }
-
-        #load:hover {
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--glass-border);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.02);
             cursor: pointer;
-            background-color: #4f46e5;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        input[type="checkbox"]:checked {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: white;
+            font-size: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        input[type="checkbox"]:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        input[type="checkbox"]:hover:not(:disabled) {
+            border-color: var(--primary);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .table-wrapper {
+            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h2>Student Attendance</h2>
-        <div class="controls">
-            Month: <select id="month"></select>
-            Year: <select id="year"></select>
-            <button id="load">Load Attendance</button>
+        <div class="header-flex">
+            <h2>Student Attendance</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Month:</span>
+                    <select id="month"></select>
+                </div>
+                <div class="control-group">
+                    <i class="fas fa-history"></i>
+                    <span>Year:</span>
+                    <select id="year"></select>
+                </div>
+                <button id="load">
+                    <i class="fas fa-sync-alt"></i>
+                    Load
+                </button>
+            </div>
         </div>
         <div class="table-wrapper">
             <div id="attendanceTable"></div>
