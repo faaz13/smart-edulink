@@ -205,10 +205,30 @@
         let btn = document.querySelector('button');
         let input = document.querySelector('input');
 
-        let tasks = null;
+        let tasks = [];
+        let storageKey = 'tasks';
+        const API_BASE = "https://edulink-backend-o3hw.onrender.com/api/v1";
+
+        async function init() {
+            try {
+                const res = await fetch(`${API_BASE}/currentUser`, {
+                    method: "POST",
+                    credentials: "include",
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.user && data.user.username) {
+                        storageKey = `tasks_${data.user.username}`;
+                    }
+                }
+            } catch (error) {
+                console.error("Auth check failed:", error);
+            }
+            retriveTasks();
+        }
 
         function retriveTasks() {
-            tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks = JSON.parse(localStorage.getItem(storageKey)) || [];
             tasks.forEach(task => renderTask(task));
         }
 
@@ -217,7 +237,7 @@
             console.log(task);
         }
 
-        retriveTasks();
+        init();
 
         function clearInput() {
             input.value = "";
@@ -256,7 +276,7 @@
         }
 
         function saveTask(arr) {
-            localStorage.setItem('tasks', JSON.stringify(arr))
+            localStorage.setItem(storageKey, JSON.stringify(arr))
         }
 
         btn.addEventListener('click', function (event) {
@@ -285,6 +305,13 @@
 
                 let task = tasks.find(t => (t.id === Number(target.id)));
                 task.completed = !task.completed;
+
+                // if(target.classList.contains("completed")){
+                //   target.classList.remove("completed");
+                // }
+                // else{
+                //   target.setAttribute('class',"completed");
+                // }
             }
             else if (target.className == 'del') {
                 target.parentElement.remove();
