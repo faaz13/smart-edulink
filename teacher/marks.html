@@ -164,7 +164,30 @@
   </div>
 
   <script>
+    // Immediate Auth Check
+    (async function checkAuth() {
+      try {
+        const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) {
+          window.top.location.href = "../login.html";
+        }
+      } catch (error) {
+        window.top.location.href = "../login.html";
+      }
+    })();
 
+    // Intercept all fetch calls to handle 401 Unauthorized globally
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+      if (response.status === 401) {
+        window.top.location.href = "../login.html";
+      }
+      return response;
+    };
     const params = new URLSearchParams(window.location.search);
     const classId = params.get("classId");
 
