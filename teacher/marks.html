@@ -84,7 +84,8 @@
       margin-bottom: 20px;
     }
 
-    input[type="text"], input[type="number"] {
+    input[type="text"],
+    input[type="number"] {
       padding: 7px 10px;
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-color);
@@ -111,18 +112,21 @@
       min-width: 100%;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid var(--border-color);
       padding: 6px;
       text-align: center;
     }
 
     th {
-      background: rgba(99,102,241,0.2);
+      background: rgba(99, 102, 241, 0.2);
       color: var(--text-color);
     }
 
-    .edit-btn, .save-btn, .cancel-btn {
+    .edit-btn,
+    .save-btn,
+    .cancel-btn {
       padding: 5px 10px;
       border: none;
       cursor: pointer;
@@ -130,9 +134,20 @@
       margin: 0 2px;
     }
 
-    .edit-btn { background: var(--primary); color: white; }
-    .save-btn { background: #10B981; color: white; }
-    .cancel-btn { background: #EF4444; color: white; }
+    .edit-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .save-btn {
+      background: #10B981;
+      color: white;
+    }
+
+    .cancel-btn {
+      background: #EF4444;
+      color: white;
+    }
 
     .highlight {
       background: rgba(16, 185, 129, 0.2) !important;
@@ -145,7 +160,6 @@
   <header>
     <h1>Marks Report – NIT Kurukshetra</h1>
     <p>Edu Link Student Marks Portal</p>
-    <!-- <button class="logout-btn" onclick="logout()">Logout</button> -->
   </header>
 
   <div class="container">
@@ -195,7 +209,6 @@
   </div>
 
   <script>
-    // Immediate Auth Check
     (async function checkAuth() {
       try {
         const res = await fetch("https://edulink-backend-o3hw.onrender.com/api/v1/currentUser", {
@@ -210,7 +223,6 @@
       }
     })();
 
-    // Intercept all fetch calls to handle 401 Unauthorized globally
     const originalFetch = window.fetch;
     window.fetch = async (...args) => {
       const response = await originalFetch(...args);
@@ -238,8 +250,6 @@
       total: 100,
     };
 
-    /* ===== FETCH DATA FROM DB ===== */
-
     async function loadStudents() {
       const res = await fetch(`${API}/${classId}`, { credentials: "include" });
       const data = await res.json();
@@ -260,8 +270,6 @@
       renderTable();
     }
 
-    /* ===== ATTENDANCE MARKS ===== */
-
     function getAttendanceMarks(student) {
       let present = student.attendance.present;
       let total = student.attendance.total;
@@ -277,8 +285,6 @@
       return 0;
     }
 
-    /* ===== TOTAL ===== */
-
     function calculateTotal(student) {
       return (
         student.mid1 +
@@ -288,8 +294,6 @@
         student.attendanceMarks
       );
     }
-
-    /* ===== CATEGORY SWITCH ===== */
 
     function loadCategory(cat, btn) {
       category = cat;
@@ -302,8 +306,6 @@
 
       renderTable();
     }
-
-    /* ===== RENDER TABLE ===== */
 
     function renderTable() {
       let tbody = document.querySelector("#marksTable tbody");
@@ -346,8 +348,6 @@ onclick="editRow(this,'${roll}')">Edit</button>`
       });
     }
 
-    /* ===== EDIT MARKS ===== */
-
     function editRow(btn, roll) {
       let row = btn.parentElement.parentElement;
 
@@ -368,22 +368,30 @@ onclick="editRow(this,'${roll}')">Edit</button>`
       saveBtn.onclick = async function () {
         let newMarks = parseInt(document.getElementById("editInput").value);
 
-        students[roll][category] = newMarks;
+        try {
+          const res = await fetch(⁠ ${ API } / ${ classId } ⁠, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              roll,
+              category,
+              marks: newMarks,
+            }),
+          });
 
-        await fetch(`${API}/${classId}`, {
-          method: "PUT",
+          const data = await res.json();
 
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-
-          body: JSON.stringify({
-            roll,
-            category,
-            marks: newMarks,
-          }),
-        });
+          if (!res.ok || !data.success) {
+            alert(data.message || "Failed to update marks");
+          } else {
+            students[roll][category] = newMarks;
+          }
+        } catch (error) {
+          alert("Server error connecting to backend");
+        }
 
         renderTable();
       };
@@ -401,8 +409,6 @@ onclick="editRow(this,'${roll}')">Edit</button>`
       btn.parentElement.appendChild(cancelBtn);
     }
 
-    /* ===== SEARCH ===== */
-
     function searchStudent() {
       let filter = document.getElementById("searchInput").value.toLowerCase();
 
@@ -414,8 +420,6 @@ onclick="editRow(this,'${roll}')">Edit</button>`
           : "none";
       });
     }
-
-    /* ===== SORT ===== */
 
     function sortByMarks() {
       let sorted = Object.entries(students).sort((a, b) => {
@@ -430,8 +434,6 @@ onclick="editRow(this,'${roll}')">Edit</button>`
 
       renderTable();
     }
-
-    /* ===== INIT ===== */
 
     loadStudents();
   </script>
